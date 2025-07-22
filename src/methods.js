@@ -8,7 +8,7 @@ export async function assembleQuestion(nQuestion, setNquestion){
     const topic = "common_notes"
     const example = await getDetailPg(id, topic)
     console.log(example)
-    return example.name + " " + example[topic];
+    return `${questionHeader} (${example.name}) ${example[topic]}`;
 }
 
 function questionBasedContext() {
