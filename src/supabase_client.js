@@ -6,7 +6,7 @@ const key ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 export async function getDetailPg(id, topic){
     const {data, error} = await supabase
         .from('characters')
-        .select(`name,${topic}`)
+        .select(`${topic}`)
         .eq('id', id)
 
     return data?.[0];

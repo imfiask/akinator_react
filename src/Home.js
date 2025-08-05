@@ -1,20 +1,12 @@
-import { useState } from 'react';
-import { assembleQuestion } from './methods';
+import { useNavigate } from 'react-router-dom';
 import './Home.css';
 
 function Home() {
-  const [nQuestion, setNquestion] = useState(1)
-  const [question, setQuestion] = useState("")
-  
-  function generateQuestion(){
-    const newQuestion = assembleQuestion(nQuestion, setNquestion)
-    setQuestion(newQuestion)
-  }
+  const navigate = useNavigate();
 
   return (
     <div className="Home">
-      <button onClick={generateQuestion}/>
-      <p style={{whiteSpace: 'pre-line'}}>{question}</p>
+      <button onClick={() => navigate('/game')}>Vai al gioco</button>
     </div>
   );
 }
