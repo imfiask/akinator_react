@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import { generateQuestion } from './methods';
+import { getNTotPg } from './supabase_client';
 import './Home.css';
 import PgList from './PgList';
 
-var topic, value
+export var topic, value, nPg
 export const pgList = new PgList()
 
 function Home() {
   const [nQuestion, setNquestion] = useState(1)
   const [question, setQuestion] = useState("")
   
-  
-  function createQuestion(){
+  async function createQuestion(){
+    nPg = await getNTotPg()
     var newQuestion
-    [newQuestion, topic, value] = generateQuestion(pgList.first(), nQuestion, setNquestion)
+    [newQuestion, topic, value] = await generateQuestion(pgList.first(), nQuestion, setNquestion)
     setQuestion(newQuestion)
   }
 
@@ -24,7 +25,7 @@ function Home() {
   return (
     <div className="Home">
       <p style={{whiteSpace: 'pre-line'}}>{question}</p>
-      <button onClick={pgList.checkAnswer("si", topic, value)}>si</button>
+      <button onClick={() => pgList.checkAnswer("sì")}>si</button>
     </div>
   );
 }

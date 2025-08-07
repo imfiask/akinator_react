@@ -4,7 +4,6 @@ const questionHeader = "Il tuo personaggio ";
 
 export async function generateQuestion(pg, nQuestion, setNquestion) {
   setNquestion((n) => n + 1);
-  //const id = (pg) ? pg.id : Math.floor(Math.random()*478+1)
   const question = nQuestion === 1 ? await getFirstQuestion() : await nextQuestion();
   return [
     `Domanda n°${nQuestion}:\n${questionHeader} ${analyzeQuestion(question)}`,
@@ -14,7 +13,6 @@ export async function generateQuestion(pg, nQuestion, setNquestion) {
 }
 
 function analyzeQuestion(question) {
-  console.log(question);
   const topic = question.topic;
   const value = question.question;
   switch (topic) {

@@ -1,4 +1,5 @@
 import { getRightIds } from "./supabase_client";
+import { topic, value } from "./Game";
 
 class PgList {
   constructor() {
@@ -17,20 +18,21 @@ class PgList {
     return this.pgList.first;
   }
 
-  checkAnswer(answer, topic, value) {
-    const correctIds = getRightIds(answer, topic, value);
+  async checkAnswer(answer) {
+    const ids = await getRightIds(answer, topic, value);
 
-    for (const id of correctIds) {
+    for (const id of ids) {
       if (this.pgList.has(id)) {
         this.pgList.set(id, this.pgList.get(id) + 1);
       } else {
-        this.pgList.add(id);
+        this.add(id);
       }
     }
+    console.log(this.pgList)
   }
 
-  length() {
-    return this.pgList.length;
+  size() {
+    return this.pgList.size;
   }
 }
 
