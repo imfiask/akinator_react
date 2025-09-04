@@ -6,8 +6,8 @@ class PgList {
     this.pgList = new Map();
   }
 
-  add(id) {
-    this.pgList.set(id, 1);
+  add(id, length) {
+    this.pgList.set(id, 1/length);
   }
 
   getList() {
@@ -20,19 +20,17 @@ class PgList {
 
   async checkAnswer(answer) {
     const ids = await getRightIds(answer, topic, value);
+    const lengthListPg = this.pgList.size + ids.length
+    console.log(lengthListPg)
 
     for (const id of ids) {
       if (this.pgList.has(id)) {
-        this.pgList.set(id, this.pgList.get(id) + 1);
+        this.pgList.set(id, this.pgList.get(id) * 0.1);
       } else {
-        this.add(id);
+        this.add(id, lengthListPg);
       }
     }
     console.log(this.pgList)
-  }
-
-  size() {
-    return this.pgList.size;
   }
 }
 

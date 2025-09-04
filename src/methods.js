@@ -1,10 +1,13 @@
 import { getFirstQuestion, nextQuestion } from "./supabase_client";
+import { questionsDone } from "./Game";
 
 const questionHeader = "Il tuo personaggio ";
 
 export async function generateQuestion(pg, nQuestion, setNquestion) {
   setNquestion((n) => n + 1);
   const question = nQuestion === 1 ? await getFirstQuestion() : await nextQuestion();
+  questionsDone.push([question.topic, question.question])
+  console.log(questionsDone)
   return [
     `Domanda n°${nQuestion}:\n${questionHeader} ${analyzeQuestion(question)}`,
     question.topic,
@@ -24,7 +27,7 @@ function analyzeQuestion(question) {
         : "è femmina?";
     case "race": return `è un ${value}?`;
     case "is_hero": return value ? "è buono/un alleato?" : "è un villain?";
-    case "team": return `attualmente fa parte ${value}?`;
+    case "team": return `fa parte ${value}?`;
     case "saga": return `è stato presentato per la prima volta durante la saga ${value}?`;
     default: return value;
   }
