@@ -15,7 +15,7 @@ const { count, error } = await supabase
 export async function getFirstQuestion() {
   const { data, error } = await supabase
     .from("questions")
-    .select("topic, question")
+    .select("topic, question, n_yes")
     .order("n_yes", { ascending: false })
     .limit(20);
 
@@ -49,44 +49,23 @@ export async function getRightIds(answer, topic, value) {
       .from("characters")
       .select("id")
       .filter("id", "not.in", `(${whoYes.join(",")})`);
-    return whoNo;
+    return whoNo.map(item => item.id);;
   }
 }
 
 //query per pescare la domanda giusta
-// ids: number[]           -> lista degli ID rimasti in gioco
-// questionsDone: Array<[topic: string, question: any]> -> coppie già chieste
-export async function nextQuestion() {
-  const { data, error } = await supabase
-    .from('questions')
-    .select('topic, question, who_yes')
-    .overlaps('who_yes', pgList);
+export async function nextQuestion(ids, qd) {
+  const { data, error } = await supabase.rpc("next_question", {
+    ids: ids,
+    questions_done: qd
+  })
 
-  if (error) throw error;
-  if (!data) return [];
-
-  /*const doneSet = new Set(
-    questionsDone.map(([t, q]) => `${t}||${JSON.stringify(q)}`)
-  );*/
-
-  // 3) per robustezza, confronto come stringhe (nel caso gli id in who_yes fossero stringhe)
-  //const idSet = new Set(ids.map(String));
-
-  // 4) calcolo n_yes_in_game = |who_yes ∩ ids|
-  const ranked = data
-    .map(({ topic, question, who_yes }) => {
-      const overlapCount = (who_yes || []).reduce(
-        (acc, id) => acc + (pgList.has(String(id)) ? 1 : 0),
-        0
-      );
-      return { topic, question, n_yes_in_game: overlapCount };
-    })
-    .filter(r => r.n_yes_in_game > 0)
-    .filter(r => !questionsDone.has(`${r.topic}||${JSON.stringify(r.question)}`))
-    .sort((a, b) => b.n_yes_in_game - a.n_yes_in_game)
-    .slice(0, 20);
-
-  return ranked; // [{ topic, question, n_yes_in_game }, ...]
+  if (error) {
+    console.error("Errore nella RPC:", error)
+    return [];
+  }
+  console.log(data)
+  return data; 
 }
 
 

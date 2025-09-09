@@ -1,13 +1,27 @@
 import { getFirstQuestion, nextQuestion } from "./supabase_client";
-import { questionsDone } from "./Game";
+import { pgList, questionsDone } from "./Game";
 
 const questionHeader = "Il tuo personaggio ";
 
-export async function generateQuestion(pg, nQuestion, setNquestion) {
+export async function generateQuestion(nQuestion, setNquestion) {
   setNquestion((n) => n + 1);
-  const question = nQuestion === 1 ? await getFirstQuestion() : await nextQuestion();
+  var question
+  if (nQuestion === 1){
+    question = await getFirstQuestion()
+  }else{
+    var nq = await nextQuestion(pgList.keys(), questionsDone);
+    console.log(pgList.keys())
+    var size = pgList.size()
+    var rightDiff = size/2, minDiff = Number.MAX_SAFE_INTEGER
+    for (var i=0; i < nq.length; i++){
+      var diff = Math.abs(nq[i].n_yes_in_game - rightDiff)
+      if (minDiff > diff){
+        minDiff = diff 
+        question = {topic: nq[i].topic, question: nq[i].question}
+      }
+    }
+  }
   questionsDone.push([question.topic, question.question])
-  console.log(questionsDone)
   return [
     `Domanda n°${nQuestion}:\n${questionHeader} ${analyzeQuestion(question)}`,
     question.topic,
@@ -16,9 +30,8 @@ export async function generateQuestion(pg, nQuestion, setNquestion) {
 }
 
 function analyzeQuestion(question) {
-  const topic = question.topic;
   const value = question.question;
-  switch (topic) {
+  switch (question.topic) {
     case "anime": return `proviene dall'universo di ${value}?`;
     case "is_male": return value == null
         ? "ha un sesso non specificato nella serie?"
