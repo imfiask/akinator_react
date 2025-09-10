@@ -22,16 +22,6 @@ export async function getFirstQuestion() {
   return singleQuestion
 }
 
-//pesca il topic specifico per un pg
-export async function getDetailPg(id, topic) {
-  const { data, error } = await supabase
-    .from("characters")
-    .select(`${topic}`)
-    .eq("id", id)
-
-  return data?.[0]
-}
-
 //prende gli id che corrispondono alla risposta data
 export async function getRightIds(answer, topic, value) {
   const { data, error } = await supabase
@@ -60,12 +50,28 @@ export async function nextQuestion(ids, qd) {
   })
 
   if (error) {
-    console.error("Errore nella RPC:", error)
+    console.error("Errore nella RPC next_question:", error)
     return []
   }
-  console.log(data)
+  //console.log(data)
   return data 
 }
 
+//query per pescare la domanda giusta basata sul pg
+export async function nextPgQuestion(ids, qd, idPg) {
+  const { data, error } = await supabase.rpc("next_pg_question", {
+    ids: ids,
+    questions_done: qd,
+    idpg: idPg
+  })
+
+  if (error) {
+    console.error("Errore nella RPC next_pg_question:", error)
+    return []
+  }
+  console.log(idPg)
+  console.log(data)
+  return data 
+}
 
 export const supabase = createClient(url, key)

@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { generateQuestion } from './methods'
-import { getNTotPg } from './supabase_client'
 import './Home.css'
 import PgList from './PgList'
 
-var topic, value, nPg
+//SIMULA E CONTROLLA PERCHE' NON RIESCE A PRENDERE PIU' DOMANDE
+//DALLA 5A IN POI DEVE ELIMINARE TUTTI GLI ID CHE HANNO P < P_MAX * 0.2
+
+var topic, value
 export const pgList = new PgList()
 export var questionsDone = []
 
@@ -14,8 +16,7 @@ function Home() {
   const initialized = useRef(false)
   
   async function createQuestion(){
-    //nPg = await getNTotPg()
-    var newQuestion
+    let newQuestion
     [newQuestion, topic, value] = await generateQuestion(nQuestion, setNquestion)
     setQuestion(newQuestion)
   }
@@ -29,8 +30,8 @@ function Home() {
   return (
     <div className="Home">
       <p style={{whiteSpace: 'pre-line'}}>{question}</p>
-      <button onClick={async() => {await pgList.checkAnswer("sì", topic, value); await createQuestion()}}>sì</button>
-      <button onClick={async() => {await pgList.checkAnswer("no", topic, value); await createQuestion()}}>no</button>
+      <button onClick={async() => {await pgList.checkAnswer("sì", topic, value, nQuestion); await createQuestion()}}>sì</button>
+      <button onClick={async() => {await pgList.checkAnswer("no", topic, value, nQuestion); await createQuestion()}}>no</button>
     </div>
   )
 }

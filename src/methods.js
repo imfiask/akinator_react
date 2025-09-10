@@ -1,15 +1,20 @@
-import { getFirstQuestion, nextQuestion } from "./supabase_client"
+import { getFirstQuestion, nextQuestion, nextPgQuestion } from "./supabase_client"
 import { pgList, questionsDone } from "./Game"
 
 const questionHeader = "Il tuo personaggio "
 
 export async function generateQuestion(nQuestion, setNquestion) {
   setNquestion((n) => n + 1)
-  var question
-  if (nQuestion === 1){
+  let question
+  if (nQuestion === 1) {
     question = await getFirstQuestion()
-  }else{
-    var nq = await nextQuestion(pgList.keys(), questionsDone)
+  } else if (nQuestion < 5) {
+    console.log("il primo è " + pgList.firstKey())
+    let nq = await nextQuestion(pgList.keys(), questionsDone)
+    console.log(pgList.keys())
+    question = rightQuestion(nq)
+  } else {
+    let nq = await nextPgQuestion(pgList.keys(), questionsDone, pgList.firstKey())
     console.log(pgList.keys())
     question = rightQuestion(nq)
   }
@@ -17,7 +22,7 @@ export async function generateQuestion(nQuestion, setNquestion) {
   return [
     `Domanda n°${nQuestion}:\n${questionHeader} ${analyzeQuestion(question)}`,
     question.topic,
-    question.question,
+    question.question
   ]
 }
 
@@ -39,11 +44,11 @@ function analyzeQuestion(question) {
 }
 
 function rightQuestion(nq){
-  var tempQ
-  var size = pgList.size()
-  var rightDiff = size/2, minDiff = Number.MAX_SAFE_INTEGER
-  for (var i=0; i < nq.length; i++){
-    var diff = Math.abs(nq[i].n_yes_in_game - rightDiff)
+  let tempQ
+  let size = pgList.length()
+  let rightDiff = size/2, minDiff = Number.MAX_SAFE_INTEGER
+  for (let i=0; i < nq.length; i++){
+    let diff = Math.abs(nq[i].n_yes_in_game - rightDiff)
     if (minDiff > diff){ 
       minDiff = diff
       tempQ = {topic: nq[i].topic, question: nq[i].question}

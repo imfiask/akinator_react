@@ -1,48 +1,76 @@
-import { getRightIds, nextQuestion } from "./supabase_client"
-import { questionsDone } from "./Game"
+import { getRightIds } from "./supabase_client"
 
 class PgList {
   constructor() {
-    this.pgList = new Map()
+    this.pgList = []
   }
 
   add(id, length) {
-    this.pgList.set(id, 1/length)
+    let map = new Map()
+    this.pgList.push(map.set(id, 1/length))
   }
 
   getList() {
     return this.pgList
   }
 
-  first() {
-    return this.pgList.first
-    //return this.pgList.size > 0 ? [...this.pgList.keys()][0] : null
+  sort() {
+    this.pgList.sort((a, b) => {
+      const el1 = [...a.values()][0]
+      const el2 = [...b.values()][0]
+      return  (el1 === el2) ? Math.random() - 0.5 : el2 - el1
+    })
   }
 
-  async checkAnswer(answer, topic, value) {
+  normalize(){
+    let sum = 0
+    this.pgList.forEach(map => sum += [...map.values()][0])
+    this.pgList = this.pgList.map(map => {
+      const id = [...map.keys()][0]
+      const value = [...map.values()][0] / sum
+      return new Map([[id, value]])
+    })
+  }
+  
+  firstKey() {
+    return this.pgList[0].keys().next().value
+  }
+
+  firstValue(){
+    return this.pgList[0].get(this.firstKey())
+  }
+
+  async checkAnswer(answer, topic, value, nQuestion) {
     const ids = await getRightIds(answer, topic, value)
-    const lengthListPg = this.pgList.size + ids.length
+    let listLength = this.length()
 
     for (const id of ids) {
-      if (this.pgList.has(id)) {
-        this.pgList.set(id, this.pgList.get(id) * 0.1)
+      const existingIndex = this.pgList.findIndex(map => map.has(id))
+      if (existingIndex !== -1) {
+        const oldVal = [...this.pgList[existingIndex].values()][0]
+        this.pgList[existingIndex].set(id, oldVal * 1.3)
       } else {
-        this.add(id, lengthListPg)
+        if (nQuestion < 5){
+          this.add(id, listLength + ids.length)
+        }
       }
     }
-    //console.log(this.pgList)
+    this.normalize()
+    this.sort()
+    console.log(this.pgList)
+    console.log("kakashi è alla posizione " + this.pgList.findIndex(map => map.has(487)))
   }
 
   keys(){
-    return [...this.pgList.keys()]
+    return this.pgList.map(map => [...map.keys()][0])
   }
 
   has(id) {
-    return this.pgList.has(id)
+    return this.pgList.some(map => map.has(id))
   }
 
-  size(){
-    return this.pgList.size
+  length(){
+    return this.pgList.length
   }
 }
 
