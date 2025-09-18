@@ -14,7 +14,7 @@ const { count, error } = await supabase
 export async function getFirstQuestion() {
   const { data, error } = await supabase
     .from("questions")
-    .select("topic, question, n_yes")
+    .select("id, topic, question, n_yes")
     .order("n_yes", { ascending: false })
     .limit(20)
 
@@ -48,13 +48,14 @@ export async function nextQuestion(ids, qd) {
     ids: ids,
     questions_done: qd
   })
-
+  console.log(qd)
   if (error) {
-    console.error("Errore nella RPC next_question:", error)
+    console.error("Errore in next_question:", error)
     return []
   }
+  
   //console.log(data)
-  return data 
+  return data
 }
 
 //query per pescare la domanda giusta basata sul pg
@@ -66,9 +67,12 @@ export async function nextPgQuestion(ids, qd, idPg) {
   })
 
   if (error) {
-    console.error("Errore nella RPC next_pg_question:", error)
+    console.error("Errore in next_pg_question:", error)
     return []
   }
+  console.clear()
+  console.log(ids)
+  console.log(qd)
   console.log(idPg)
   console.log(data)
   return data 

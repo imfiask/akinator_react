@@ -58,7 +58,7 @@ class PgList {
     this.normalize()
     this.sort()
     console.log(this.pgList)
-    console.log("kakashi è alla posizione " + this.pgList.findIndex(map => map.has(487)))
+    //console.log("kakashi è alla posizione " + this.pgList.findIndex(map => map.has(487)))
   }
 
   keys(){

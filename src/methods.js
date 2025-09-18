@@ -18,7 +18,7 @@ export async function generateQuestion(nQuestion, setNquestion) {
     console.log(pgList.keys())
     question = rightQuestion(nq)
   }
-  questionsDone.push([question.topic, question.question])
+  questionsDone.push([question.id, question.topic, question.question])
   return [
     `Domanda n°${nQuestion}:\n${questionHeader} ${analyzeQuestion(question)}`,
     question.topic,
@@ -51,7 +51,7 @@ function rightQuestion(nq){
     let diff = Math.abs(nq[i].n_yes_in_game - rightDiff)
     if (minDiff > diff){ 
       minDiff = diff
-      tempQ = {topic: nq[i].topic, question: nq[i].question}
+      tempQ = {id: nq[i].id, topic: nq[i].topic, question: nq[i].question}
     }
   }
   return tempQ
