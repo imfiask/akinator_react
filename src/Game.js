@@ -3,13 +3,10 @@ import { generateQuestion } from './methods'
 import './Home.css'
 import PgList from './PgList'
 
-//SIMULA E CONTROLLA PERCHE' NON RIESCE A PRENDERE PIU' DOMANDE
-//DALLA 5A IN POI DEVE ELIMINARE TUTTI GLI ID CHE HANNO P < P_MAX * 0.2
-
 var topic, value
 export const pgList = new PgList()
 export var questionsDone = []
-
+//DEVI MODIFICARE LE FUNZIONI SQL, AGGIUNTA CONTROLLO DELLA LISTA PG ANIME
 function Home() {
   const [nQuestion, setNquestion] = useState(1)
   const [question, setQuestion] = useState("")

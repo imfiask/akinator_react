@@ -70,12 +70,40 @@ export async function nextPgQuestion(ids, qd, idPg) {
     console.error("Errore in next_pg_question:", error)
     return []
   }
-  console.clear()
-  console.log(ids)
+  //console.log(ids)
   console.log(qd)
-  console.log(idPg)
+  //console.log(idPg)
   console.log(data)
   return data 
+}
+
+export async function getDetailsPg(id) {
+  const { data, error } = await supabase
+    .from("characters")
+    .select("name, image")
+    .eq("id", id)
+    .single()
+
+  return data
+}
+
+export async function getAnimePgs(answer, anime){
+  const { data, error } = await supabase
+    .from("questions")
+    .select("who_yes")
+    .eq("topic", "anime")
+    .eq("question", JSON.stringify(anime))
+  
+  const whoYes = data[0].who_yes
+  if (answer === "sì" || answer === "probSì") {
+    return whoYes
+  } else {
+    const { data: whoNo, error: error2 } = await supabase
+      .from("characters")
+      .select("id")
+      .filter("id", "not.in", `(${whoYes.join(",")})`)
+    return whoNo.map(item => item.id)
+  }
 }
 
 export const supabase = createClient(url, key)

@@ -8,8 +8,7 @@ export async function generateQuestion(nQuestion, setNquestion) {
   let question
   if (nQuestion === 1) {
     question = await getFirstQuestion()
-  } else if (nQuestion < 5) {
-    console.log("il primo è " + pgList.firstKey())
+  } else if (nQuestion <= 3) {
     let nq = await nextQuestion(pgList.keys(), questionsDone)
     console.log(pgList.keys())
     question = rightQuestion(nq)
