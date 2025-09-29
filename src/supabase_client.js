@@ -1,13 +1,16 @@
 import { createClient } from "@supabase/supabase-js"
+import { animeList } from "./Game"
 
 const url = "https://hqwgodduwropoldqavdt.supabase.co"
 const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhxd2dvZGR1d3JvcG9sZHFhdmR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkwNjUwMDYsImV4cCI6MjA0NDY0MTAwNn0.-82Y5pZd_MPSG3n7PCAV7mAzRAHRnU-3-XzV-Wm8Lcc"
 
-export async function getNTotPg() {
-const { count, error } = await supabase
-  .from('characters')
-  .select('*', { count: 'exact', head: true })
-  return count
+//prende tutti gli anime distinti
+export async function getAllAnime(){
+  const { data, error } = await supabase
+    .from('distinct_anime')
+    .select('*')
+
+    return data.map(element => element.anime)
 }
 
 //pesca la prima domanda
@@ -16,6 +19,7 @@ export async function getFirstQuestion() {
     .from("questions")
     .select("id, topic, question, n_yes")
     .order("n_yes", { ascending: false })
+    .neq("topic", "anime")
     .limit(20)
 
   const singleQuestion = data[Math.floor(Math.random() * data.length)]
@@ -31,14 +35,32 @@ export async function getRightIds(answer, topic, value) {
     .eq("question", JSON.stringify(value))
   
   const whoYes = data[0].who_yes
-  if (answer === "sì" || answer === "probSì") {
-    return whoYes
+  let flag = answer === "sì" || answer === "probSì"
+  if (topic === "anime") flag = !flag
+  if (flag) {
+    const { data, error } = await supabase
+      .from("characters")
+      .select("id")
+      .in("id", whoYes)
+      .in("anime", animeList)
+
+    if (error) {
+      console.error(error)
+      return []
+    }
+    return data.map(element => element.id)
   } else {
     const { data: whoNo, error: error2 } = await supabase
       .from("characters")
       .select("id")
       .filter("id", "not.in", `(${whoYes.join(",")})`)
-    return whoNo.map(item => item.id)
+      .in("anime", animeList)
+
+    if (error2) {
+      console.error(error2)
+      return []
+    }
+    return whoNo.map(element => element.id)
   }
 }
 
@@ -48,13 +70,11 @@ export async function nextQuestion(ids, qd) {
     ids: ids,
     questions_done: qd
   })
-  console.log(qd)
   if (error) {
     console.error("Errore in next_question:", error)
     return []
   }
-  
-  //console.log(data)
+  console.log("nextQuestion:", data)
   return data
 }
 
@@ -70,14 +90,12 @@ export async function nextPgQuestion(ids, qd, idPg) {
     console.error("Errore in next_pg_question:", error)
     return []
   }
-  //console.log(ids)
-  console.log(qd)
-  //console.log(idPg)
-  console.log(data)
+  console.log("nextPgQuestion:", data)
   return data 
 }
 
-export async function getDetailsPg(id) {
+//prende nome e img della soluzione
+export async function getInfoSolution(id) {
   const { data, error } = await supabase
     .from("characters")
     .select("name, image")
@@ -87,23 +105,15 @@ export async function getDetailsPg(id) {
   return data
 }
 
-export async function getAnimePgs(answer, anime){
+export async function getSpecificQuestion(id){
   const { data, error } = await supabase
     .from("questions")
-    .select("who_yes")
-    .eq("topic", "anime")
-    .eq("question", JSON.stringify(anime))
+    .select("id, topic, question")
+    .eq("n_yes", 1)
+    .overlaps("who_yes", [id])
   
-  const whoYes = data[0].who_yes
-  if (answer === "sì" || answer === "probSì") {
-    return whoYes
-  } else {
-    const { data: whoNo, error: error2 } = await supabase
-      .from("characters")
-      .select("id")
-      .filter("id", "not.in", `(${whoYes.join(",")})`)
-    return whoNo.map(item => item.id)
-  }
+  if(error) console.error(error)
+  return data[0]
 }
 
 export const supabase = createClient(url, key)

@@ -1,4 +1,6 @@
-import { getRightIds, getDetailsPg } from "./supabase_client"
+import { getRightIds, getInfoSolution } from "./supabase_client"
+import { removeAnime } from "./methods"
+import { gameState } from "./Game"
 
 class PgList {
   constructor() {
@@ -41,13 +43,23 @@ class PgList {
     return this.pgList[0].get(this.firstKey())
   }
 
-  async checkAnswer(answer, topic, value, nQuestion) {
+  async checkAnswer(answer, topic, value, nQuestion, navigate) {
+    if(gameState.flagFocus){
+      if(answer === "sì" || answer === "probSì"){
+        const pg = await getInfoSolution(this.firstKey())
+        navigate('/win', { state: { name: pg.name, image: pg.image } })
+      }else{
+        this.remove([this.firstKey()])
+      }
+      gameState.flagFocus=false
+      return
+    }
     const ids = await getRightIds(answer, topic, value)
     this.updateProbabilities(ids, nQuestion)
 
-    if (topic === "anime" && nQuestion-1 > 1) {
-      console.log(ids)
-      this.remove(ids, {flag: answer === "sì" || answer === "probSì"})
+    if (topic === "anime") {
+      removeAnime(answer === "sì" || answer === "probSì", value)
+      if(nQuestion > 2) this.remove(ids)
       this.normalize()
       console.log(this.pgList)
       return
@@ -55,12 +67,12 @@ class PgList {
 
     this.normalize()
     console.log(this.pgList)
-    if (nQuestion > 3) {
-      this.selectAndRemoveLowProbabilities()
+    if (nQuestion > 4) {
+      this.selectAndRemoveLowProbabilities(topic, answer)
       this.normalize()
       if (this.isFirstHighEnough()) {
-        const pg = await getDetailsPg(this.firstKey())
-        console.log("IL PERSONAGGIO È " + pg.name)
+        const pg = await getInfoSolution(this.firstKey())
+        navigate('/win', { state: { name: pg.name, image: pg.image } })
       }
     }
   }
@@ -80,7 +92,7 @@ class PgList {
     }
   }
 
-  selectAndRemoveLowProbabilities() {
+  selectAndRemoveLowProbabilities(topic, answer) {
     const toRemove = []
     const minValue = this.firstValue() * 0.2
     let i = this.length() - 1
@@ -91,15 +103,18 @@ class PgList {
         i--
       } else break
     }
-    console.log(toRemove)
-    this.remove(toRemove)
+
+    if(toRemove.length !== 0){
+      if(topic === "anime") return
+      this.remove(toRemove)
+    }
+    console.log("lista aggiornata", this.pgList)
   }
 
   isFirstHighEnough() {
-    if (this.length() < 2) return false
     const first = this.pgList[0].values().next().value
     const second = this.pgList[1].values().next().value
-    return first / second > 1.6
+    return first / second > 1.65
   }
 
   keys(){
@@ -114,8 +129,8 @@ class PgList {
     return this.pgList.length
   }
 
+  //?controlla perché forse è inutile il flag
   remove(toRemove, { flag = false } = {}) {
-    console.log(flag)
     this.pgList = this.pgList.filter(map => {
       const id = [...map.keys()][0]
       return flag ? toRemove.includes(id) : !toRemove.includes(id)
