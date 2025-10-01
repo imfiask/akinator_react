@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Home';
 import Game from './Game';
-import Win from './Win';
+import Result from './Result';
 //import Result from './Result';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/game" element={<Game />} />
-        <Route path="/win" element={<Win />} />
+        <Route path="/result" element={<Result />} />
         {/*<Route path="/result" element={<Result />} />*/}
       </Routes>
     </Router>

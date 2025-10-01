@@ -1,6 +1,6 @@
 import { getRightIds, getInfoSolution } from "./supabase_client"
 import { removeAnime } from "./methods"
-import { gameState, maxExpansionRound } from "./Game"
+import { maxExpansionRound } from "./Game"
 
 class PgList {
   constructor() {
@@ -51,45 +51,56 @@ class PgList {
     return this.pgList[1].values().next().value
   }
 
-  async checkAnswer(answer, topic, value, nQuestion) {
-    if(gameState.flagFocus){
+  async checkAnswer(answer, topic, value, nQuestion, flagFocus, setGameState) {
+    if(flagFocus){
+      const pg = await getInfoSolution(this.firstKey())
       if(answer === "sì" || answer === "probSì"){
-        gameState.flagWin = true
-        const pg = await getInfoSolution(this.firstKey())
+        setGameState(state =>({
+          ...state,
+          flagWin: true,
+          nameWinner: pg.name,
+          imageWinner: pg.image
+        }))
         //navigate('/win', {state: { name: pg.name, image: pg.image }})
-        gameState.nameWinner = pg.name
-        gameState.imageWinner = pg.image
+        return true
       }
       this.pgList[0].set(this.firstKey(), this.firstValue() * 0.5) 
-      gameState.flagFocus = false
+      this.normalize()
+      setGameState(state =>({
+        ...state,
+        flagFocus: false,
+      }))
       console.log("focus false")
-      return
+      return false
     }
     const ids = await getRightIds(answer, topic, value)
-    console.log("ids:", ids)
     this.updateProbabilities(ids, nQuestion)
 
     if (topic === "anime") {
       removeAnime(answer === "sì" || answer === "probSì", value)
       this.remove(ids)
-      this.normalize()
-      return
+      //this.normalize()
+      //return false
     }
 
     this.normalize()
-    console.log(nQuestion, maxExpansionRound, nQuestion > maxExpansionRound)
+    console.log("nQuestion:", nQuestion, "maxExpansionRound:", maxExpansionRound, "nQuestion > maxExpansionRound")
     if (nQuestion > maxExpansionRound) {
       console.log("tolgo pg")
       this.selectAndRemoveLowProbabilities(topic, answer)
       this.normalize()
       if (this.isFirstHighEnough()) {
-        gameState.flagWin = true
         const pg = await getInfoSolution(this.firstKey())
-        //navigate('/win', { state: { name: pg.name, image: pg.image } })
-        gameState.nameWinner = pg.name
-        gameState.imageWinner = pg.image
+        setGameState(state =>({
+          ...state,
+          flagWin: true,
+          nameWinner: pg.name,
+          imageWinner: pg.image
+        }))
+        return true
       }
     }
+    return false
   }
 
   updateProbabilities(ids, nQuestion) {
@@ -146,11 +157,10 @@ class PgList {
     return this.pgList.length
   }
 
-  //?controlla perché forse è inutile il flag
-  remove(toRemove, { flag = false } = {}) {
+  remove(toRemove) {
     this.pgList = this.pgList.filter(map => {
       const id = [...map.keys()][0]
-      return flag ? toRemove.includes(id) : !toRemove.includes(id)
+      return !toRemove.includes(id)
     })
   }
 }
