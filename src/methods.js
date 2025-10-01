@@ -1,38 +1,39 @@
-import { getFirstQuestion, nextPgQuestion } from "./supabase_client"
-import { pgList, questionsDone, animeList, gameState } from "./Game"
+import { getFirstQuestion, nextPgQuestion, getInfoSolution } from "./supabase_client"
+import { pgList, questionsDone, animeList, gameState, nFirstQuestion } from "./Game"
 
 const questionHeader = "Il tuo personaggio "
 
-export async function generateQuestion(nQuestion, setNquestion) { //! sistema e cancella le funzioni inutili
-  setNquestion((n) => n + 1)
+export async function generateQuestion(nQuestion, navigate) {
   let question
-    //question = await getRightIds()
-    //question = await getSpecificQuestion(pgList.getList()[0].keys().next().value)
-    
-    //console.log(question)
-  //}else{
-  if (nQuestion === 1) {
-    question = await getFirstQuestion()
-  /*} else if (nQuestion <= 3) {
-    let nq = await nextQuestion(pgList.keys(), questionsDone)
-    question = rightQuestion(nq, gameState.flagFocus)*/
-  } else {
+  if (nQuestion === nFirstQuestion) question = await getFirstQuestion()
+  else {
     let nq = await nextPgQuestion(pgList.keys(), questionsDone, pgList.firstKey())
-    if(pgList.getList()[0].values().next().value / pgList.getList()[1].values().next().value >= 1.3){
+    if(pgList.firstValue() / pgList.secondValue() >= 1.3){
       gameState.flagFocus = true
+      console.log("focus true perché primo/secondo = " + pgList.firstValue() / pgList.secondValue())
     }
-    question = rightQuestion(nq)
+    if(nq.length === 0){
+      if(pgList.firstValue() > pgList.secondValue()){
+        gameState.flagWin = true
+        const pg = await getInfoSolution(pgList.firstKey())
+        //navigate('/win', {state: { name: pg.name, image: pg.image }})
+        gameState.nameWinner = pg.name
+        gameState.imageWinner = pg.image
+        return
+      } else {
+        nq = await nextPgQuestion(pgList.keys(), questionsDone, pgList.secondKey())
+        gameState.flagFocus = true
+        console.log("focus true")
+      }
+    }
+    question = rightQuestion(nq, gameState.flagFocus)
   }
-  //}
-  console.log("question: ", question)
-  console.log(questionsDone)
   questionsDone.push([question.id, question.topic, question.question])
   return [
     `Domanda n°${nQuestion}:\n${questionHeader} ${analyzeQuestion(question)}`,
     question.topic,
     question.question
   ]
-  
 }
 
 function analyzeQuestion(question) {

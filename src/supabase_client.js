@@ -74,7 +74,6 @@ export async function nextQuestion(ids, qd) {
     console.error("Errore in next_question:", error)
     return []
   }
-  console.log("nextQuestion:", data)
   return data
 }
 
@@ -90,7 +89,6 @@ export async function nextPgQuestion(ids, qd, idPg) {
     console.error("Errore in next_pg_question:", error)
     return []
   }
-  console.log("nextPgQuestion:", data)
   return data 
 }
 
