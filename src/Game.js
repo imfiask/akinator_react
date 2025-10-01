@@ -50,19 +50,19 @@ function Game() {
   async function createQuestion(){
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
-    console.log(pgList.getList())
+    //console.log(pgList.getList())
     let newQuestion
     [newQuestion, topic, value] = await generateQuestion(nq, setGameState)
     setQuestion(newQuestion)
-    console.log(questionsDone)
+    //console.log(questionsDone)
   }
   
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
     resetGame(setNquestion, setQuestion, setGameState)
-    console.log(animeList)
-    console.log(animeInGame)
+    //console.log(animeList)
+    //console.log(animeInGame)
     createQuestion()
   }, [])
 

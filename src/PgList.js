@@ -70,7 +70,7 @@ class PgList {
         ...state,
         flagFocus: false,
       }))
-      console.log("focus false")
+      //console.log("focus false")
       return false
     }
     const ids = await getRightIds(answer, topic, value)
@@ -84,9 +84,9 @@ class PgList {
     }
 
     this.normalize()
-    console.log("nQuestion:", nQuestion, "maxExpansionRound:", maxExpansionRound, "nQuestion > maxExpansionRound")
+    //console.log("nQuestion:", nQuestion, "maxExpansionRound:", maxExpansionRound, "nQuestion > maxExpansionRound")
     if (nQuestion > maxExpansionRound) {
-      console.log("tolgo pg")
+      //console.log("tolgo pg")
       this.selectAndRemoveLowProbabilities(topic, answer)
       this.normalize()
       if (this.isFirstHighEnough()) {
@@ -112,7 +112,7 @@ class PgList {
         this.pgList[i].set(id, oldVal * 1.3)
       } else {
         if (nQuestion < maxExpansionRound){
-          console.log("aggiungo nuovi id")
+          //console.log("aggiungo nuovi id")
           this.add(id, listLength + ids.length)
         }
       }
@@ -135,13 +135,13 @@ class PgList {
       if(topic === "anime") return
       this.remove(toRemove)
     }
-    console.log("toRemove: ", toRemove)
+    //console.log("toRemove: ", toRemove)
   }
 
   isFirstHighEnough() {
     const first = this.pgList[0].values().next().value
     const second = this.pgList[1].values().next().value
-    console.log(first / second)
+    //console.log(first / second)
     return first / second > 1.65
   }
 

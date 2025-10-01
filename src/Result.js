@@ -1,7 +1,6 @@
 import { Button, Container, Typography } from "@mui/material"
 import { useLocation } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
-import { resetGame } from "./Game"
 
 function Result() {
   const location = useLocation()

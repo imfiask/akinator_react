@@ -14,7 +14,7 @@ export async function generateQuestion(nQuestion, setGameState) {
         ...state,
         flagFocus: true,
       }))
-      console.log("focus true perché primo/secondo = " + pgList.firstValue() / pgList.secondValue())
+      //console.log("focus true perché primo/secondo = " + pgList.firstValue() / pgList.secondValue())
       flag = true
     }
     if(nq.length === 0){
@@ -34,7 +34,7 @@ export async function generateQuestion(nQuestion, setGameState) {
           ...state,
           flagFocus: true,
         }))
-        console.log("focus true")
+        //console.log("focus true")
         flag = true
       }
     }
@@ -86,5 +86,5 @@ function rightQuestion(nq, flag){
 
 export function removeAnime(flag, anime){
   animeInGame.splice(0, animeInGame.length, ...animeInGame.filter(item => flag ? item === anime : item !== anime))
-  console.log("animeInGame: ", animeInGame)
+  //console.log("animeInGame: ", animeInGame)
 }

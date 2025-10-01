@@ -54,7 +54,6 @@ export async function getRightIds(answer, topic, value) {
       .select("id")
       .filter("id", "not.in", `(${whoYes.join(",")})`)
       .in("anime", animeInGame)
-    console.log("sono sopravvissuto")
     if (error2) {
       console.error(error2)
       return []
