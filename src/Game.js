@@ -15,6 +15,7 @@ export var questionsDone
 export var animeInGame
 export var maxExpansionRound
 export var nFirstQuestion
+var countIdk = 0
 var attempts
 var animeList = await getAllAnime()
 
@@ -87,6 +88,7 @@ function Game() {
               <Button
                 onClick={
                   async() => {
+                  if(++countIdk === 5) navigate('/result', { state: { error: 2 } })
                   maxExpansionRound++
                   nFirstQuestion++
                   await createQuestion()
