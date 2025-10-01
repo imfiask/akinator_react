@@ -14,7 +14,7 @@ function Result() {
       case 1:
         return "Mi spiace, non sono riuscito a trovare il personaggio che stai cercando... Riprova e giochiamo ancora!"
       case 2:
-        return "Non sai manco tu il personaggio a cui stavi pensando, ritorna quando sarai preparato"
+        return "Non sai manco tu il personaggio a cui stai pensando, ritorna quando sarai preparato"
       default: console.log("yoyoyo")
     }
   }
