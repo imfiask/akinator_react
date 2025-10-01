@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js"
 import { animeInGame } from "./Game"
 
-const url = process.env.URL
-const key = process.env.KEY
+const url = process.env.REACT_APP_SUPABASE_URL
+const key = process.env.REACT_APP_SUPABASE_KEY
 
 //prende tutti gli anime distinti
 export async function getAllAnime(){
