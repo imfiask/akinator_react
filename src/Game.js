@@ -6,8 +6,7 @@ import { getAllAnime, getAmountPg } from './supabase_client'
 import PgList from './PgList'
 /*
 - (elimina funzioni inutili)
-- spostare isLoading e progress dentro gameState
-- controllare e gestire meglio il progress (magari aggiungendo l'elemento flagFocus)
+- aggiungere le immagini dell'avatar
 - poter ritornare indietro con le domande
 */
 var topic, value
@@ -59,7 +58,7 @@ function Game() {
     if (nQuestion > 2) updateProgress()
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
-    console.log(pgList.getList())
+    //console.log(pgList.getList())
     let newQuestion
     [newQuestion, topic, value] = await generateQuestion(nq, setGameState)
     if (newQuestion) setQuestion(newQuestion)
