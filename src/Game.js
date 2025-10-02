@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Typography, Button, ButtonGroup, Box } from "@mui/material";
+import { Container, Typography, Button, ButtonGroup, Box, CircularProgress } from "@mui/material";
 import { generateQuestion } from './methods'
 import { getAllAnime } from './supabase_client'
 import PgList from './PgList'
 /*
 - (elimina funzioni inutili)
-- aggiungere un caricamento tra una domanda e l'altra
-- dopo 5 "non lo so" metti un messaggio "Mr. Non Lo So"
+- aggiungi i due "probabilmente"
+- barra di progresso
+- poter ritornare indietro con le domande
 */
 var topic, value
 export var pgList
@@ -26,6 +27,7 @@ export async function resetGame(setNquestion, setQuestion, setGameState){
   maxExpansionRound = 4
   nFirstQuestion = 1
   attempts = 1
+  countIdk = 0
   setNquestion(0)
   setQuestion("")
   setGameState({
@@ -39,6 +41,7 @@ export async function resetGame(setNquestion, setQuestion, setGameState){
 function Game() {
   const [nQuestion, setNquestion] = useState(0)
   const [question, setQuestion] = useState("")
+  const [isLoading, setLoading] = useState(false)
   const [gameState, setGameState] = useState({
     flagFocus: false,
     flagWin: false,
@@ -49,12 +52,15 @@ function Game() {
   const navigate = useNavigate()
   
   async function createQuestion(){
+    setLoading(true)
+    
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
     //console.log(pgList.getList())
     let newQuestion
     [newQuestion, topic, value] = await generateQuestion(nq, setGameState)
     setQuestion(newQuestion)
+    setTimeout(() => setLoading(false), 150)
     //console.log(questionsDone)
   }
   
@@ -73,7 +79,14 @@ function Game() {
         ? (
           <>
             <strong><Typography variant="body1">Domanda n°{nQuestion}:</Typography></strong>
-            <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>{question}</Typography>
+            {isLoading
+              ? <Box
+                  component="img"
+                  src="/loading.gif"
+                  sx={{width: 50}}
+                ></Box>
+              : <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>{question}</Typography>
+            }
             <br/>
             <ButtonGroup variant = "contained">
               <Button
