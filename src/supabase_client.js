@@ -13,6 +13,15 @@ export async function getAllAnime(){
     return data.map(element => element.anime)
 }
 
+//prende il count di tutti i pg
+export async function getAmountPg(){
+  const { count, error } = await supabase
+    .from('characters')
+    .select('*', { count: 'exact', head: true})
+
+    return count
+}
+
 //pesca la prima domanda
 export async function getFirstQuestion() {
   const { data, error } = await supabase
@@ -33,7 +42,6 @@ export async function getRightIds(answer, topic, value) {
     .select("who_yes")
     .eq("topic", topic)
     .eq("question", JSON.stringify(value))
-  
   const whoYes = data[0].who_yes
   let flag = answer === "sì" || answer === "probSì"
   if (topic === "anime") flag = !flag

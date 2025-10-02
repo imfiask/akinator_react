@@ -19,15 +19,19 @@ export async function generateQuestion(nQuestion, setGameState) {
     }
     if(nq.length === 0){
       if(pgList.firstValue() > pgList.secondValue()){
-        setGameState(state =>({
-          ...state,
-          flagWin: true,
-          nameWinner: pg.name,
-          imageWinner: pg.image
-        }))
+        console.log("VINCO PERCHE' LISTA DI DOMANDE VUOTA")
+        setGameState(state =>({...state, progress: 1}))
+        setTimeout(() => {
+            setGameState(state =>({
+            ...state,
+            flagWin: true,
+            isLoading: false,
+            nameWinner: pg.name,
+            imageWinner: pg.image
+          }))
+        }, 500)
         const pg = await getInfoSolution(pgList.firstKey())
-        //navigate('/win', {state: { name: pg.name, image: pg.image }})
-        return
+        return [null, null, null]
       } else {
         nq = await nextPgQuestion(pgList.keys(), questionsDone, pgList.secondKey())
         setGameState(state =>({

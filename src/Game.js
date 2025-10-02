@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Typography, Button, ButtonGroup, Box, CircularProgress } from "@mui/material";
+import { Container, Typography, Button, ButtonGroup, Box, LinearProgress } from "@mui/material";
 import { generateQuestion } from './methods'
-import { getAllAnime } from './supabase_client'
+import { getAllAnime, getAmountPg } from './supabase_client'
 import PgList from './PgList'
 /*
 - (elimina funzioni inutili)
-- aggiungi i due "probabilmente"
-- barra di progresso
+- spostare isLoading e progress dentro gameState
+- controllare e gestire meglio il progress (magari aggiungendo l'elemento flagFocus)
 - poter ritornare indietro con le domande
 */
 var topic, value
@@ -18,6 +18,7 @@ export var maxExpansionRound
 export var nFirstQuestion
 var countIdk = 0
 var attempts
+var totPgs = await getAmountPg()
 var animeList = await getAllAnime()
 
 export async function resetGame(setNquestion, setQuestion, setGameState){
@@ -33,6 +34,8 @@ export async function resetGame(setNquestion, setQuestion, setGameState){
   setGameState({
     flagFocus: false,
     flagWin: false,
+    isLoading: true,
+    progress: 0,
     nameWinner: null,
     imageWinner: null
   })
@@ -41,10 +44,11 @@ export async function resetGame(setNquestion, setQuestion, setGameState){
 function Game() {
   const [nQuestion, setNquestion] = useState(0)
   const [question, setQuestion] = useState("")
-  const [isLoading, setLoading] = useState(false)
   const [gameState, setGameState] = useState({
     flagFocus: false,
     flagWin: false,
+    isLoading: false,
+    progress: 0,
     nameWinner: null,
     imageWinner: null
   })
@@ -52,24 +56,27 @@ function Game() {
   const navigate = useNavigate()
   
   async function createQuestion(){
-    setLoading(true)
-    
+    if (nQuestion > 2) updateProgress()
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
-    //console.log(pgList.getList())
+    console.log(pgList.getList())
     let newQuestion
     [newQuestion, topic, value] = await generateQuestion(nq, setGameState)
-    setQuestion(newQuestion)
-    setTimeout(() => setLoading(false), 150)
+    if (newQuestion) setQuestion(newQuestion)
+    setGameState(state =>({...state, isLoading: false}))
     //console.log(questionsDone)
+  }
+  
+  function updateProgress(){
+    var gapScore = pgList.firstValue() - pgList.secondValue()
+    var pgProgress = (totPgs - pgList.length()) / totPgs
+    setGameState(state =>({...state, progress: pgProgress + gapScore}))
   }
   
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
     resetGame(setNquestion, setQuestion, setGameState)
-    //console.log(animeList)
-    //console.log(animeInGame)
     createQuestion()
   }, [])
 
@@ -78,15 +85,17 @@ function Game() {
       {!gameState.flagWin
         ? (
           <>
-            <strong><Typography variant="body1">Domanda n°{nQuestion}:</Typography></strong>
-            {isLoading
-              ? <Box
-                  component="img"
-                  src="/loading.gif"
-                  sx={{width: 50}}
-                ></Box>
-              : <Typography variant="body1" sx={{ whiteSpace: 'pre-line', height: 32.7 }}>{question}</Typography>
-            }
+            <Container sx={{ height: 100 }}>
+              <Typography variant="body1" sx={{ fontWeight: "bold" }}>Domanda n°{nQuestion}:</Typography>
+              {gameState.isLoading
+                ? <Box
+                    component="img"
+                    src="/circular_loading2.gif"
+                    sx={{ width: 73.5 }}
+                  ></Box>
+                : <Typography variant="body1" sx={{ whiteSpace: 'pre-line', margin: 2 }}>{question}</Typography>
+              }
+            </Container>
             <br/>
             <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%", height: 50 }}>
               <Button
@@ -139,6 +148,15 @@ function Game() {
                 sx={{ flex: 1 }}
               >No</Button>
             </ButtonGroup>
+            <LinearProgress
+            variant="determinate"
+              value={gameState.progress * 100}
+              sx={{
+                height: 15,
+                backgroundColor: "#262626",
+                "& .MuiLinearProgress-bar": { backgroundColor: "#00b300" }
+              }}
+            />
           </>
         ) : (
           <>

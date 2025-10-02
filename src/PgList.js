@@ -51,17 +51,23 @@ class PgList {
     return this.pgList[1].values().next().value
   }
 
+  //risposta utente, tema domanda, domanda, peso, nDomanda, focus on, gameState, progress
   async checkAnswer(answer, topic, value, increase, nQuestion, flagFocus, setGameState) {
+    setGameState(state =>({...state, isLoading: true}))
     if(flagFocus){
       const pg = await getInfoSolution(this.firstKey())
       if(answer === "sì" || answer === "probSì"){
-        setGameState(state =>({
-          ...state,
-          flagWin: true,
-          nameWinner: pg.name,
-          imageWinner: pg.image
-        }))
-        //navigate('/win', {state: { name: pg.name, image: pg.image }})
+        console.log("VINCO PERCHE' FLAGFOCUS")
+        setGameState(state =>({...state, progress: 1}))
+        setTimeout(() => {
+            setGameState(state =>({
+            ...state,
+            flagWin: true,
+            isLoading: false,
+            nameWinner: pg.name,
+            imageWinner: pg.image
+          }))
+        }, 500)
         return true
       }
       this.pgList[0].set(this.firstKey(), this.firstValue() * 0.5) 
@@ -79,8 +85,6 @@ class PgList {
     if (topic === "anime") {
       removeAnime(answer === "sì" || answer === "probSì", value)
       this.remove(ids)
-      //this.normalize()
-      //return false
     }
 
     this.normalize()
@@ -91,12 +95,17 @@ class PgList {
       this.normalize()
       if (this.isFirstHighEnough()) {
         const pg = await getInfoSolution(this.firstKey())
-        setGameState(state =>({
-          ...state,
-          flagWin: true,
-          nameWinner: pg.name,
-          imageWinner: pg.image
-        }))
+        console.log("VINCO PERCHE' PROBABILITA' ABBASTANZA ALTA")
+        setGameState(state =>({...state, progress: 1}))
+        setTimeout(() => {
+            setGameState(state =>({
+            ...state,
+            flagWin: true,
+            isLoading: false,
+            nameWinner: pg.name,
+            imageWinner: pg.image
+          }))
+        }, 500)
         return true
       }
     }
@@ -112,7 +121,6 @@ class PgList {
         this.pgList[i].set(id, oldVal * increase)
       } else {
         if (nQuestion < maxExpansionRound){
-          //console.log("aggiungo nuovi id")
           this.add(id, listLength + ids.length)
         }
       }
