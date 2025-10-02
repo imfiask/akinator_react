@@ -169,7 +169,7 @@ function Game() {
               component = "img"
               src={gameState.imageWinner}
               alt={gameState.nameWinner}
-              sx={{ width: 250 }}
+              sx={{ width: 250, height: 250, objectFit: "contain" }}
             />
             <br/>
             <Button
