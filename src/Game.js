@@ -74,7 +74,7 @@ function Game() {
   }, [])
 
   return (
-    <Container sx={{ textAlign: "center", width: 450, margin: "0 auto" }}>
+    <Container maxWidth="sm" sx={{ textAlign: "center" }}>
       {!gameState.flagWin
         ? (
           <>
@@ -85,7 +85,7 @@ function Game() {
                   src="/loading.gif"
                   sx={{width: 50}}
                 ></Box>
-              : <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>{question}</Typography>
+              : <Typography variant="body1" sx={{ whiteSpace: 'pre-line', height: 32.7 }}>{question}</Typography>
             }
             <br/>
             <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%" }}>
