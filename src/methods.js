@@ -52,7 +52,7 @@ function analyzeQuestion(question) {
   const value = question.question
   switch (question.topic) {
     case "anime": return `proviene dall'universo di ${value}?`
-    case "is_male": return value == null
+    case "is_male": return value === "null"
         ? "ha un sesso non specificato nella serie?"
         : value
         ? "è maschio?"
