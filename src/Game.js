@@ -74,7 +74,7 @@ function Game() {
   }, [])
 
   return (
-    <Container sx={{ textAlign: "center" }}>
+    <Container sx={{ textAlign: "center", width: 450, margin: "0 auto" }}>
       {!gameState.flagWin
         ? (
           <>
@@ -88,15 +88,35 @@ function Game() {
               : <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>{question}</Typography>
             }
             <br/>
-            <ButtonGroup variant = "contained">
+            <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%" }}>
               <Button
                 onClick={
                   async() => {
-                    var isFinished = await pgList.checkAnswer("sì", topic, value, nQuestion, gameState.flagFocus, setGameState)
+                    var isFinished = await pgList.checkAnswer("probSì", topic, value, "1.15", nQuestion, gameState.flagFocus, setGameState)
                     if (!isFinished) await createQuestion()
                   }
                 }
-                //sx={{ margin: 1 }}
+                sx={{ flex: 1 }}
+              >Probabilmente Sì</Button>
+              <Button
+                onClick={
+                  async() => {
+                    var isFinished = await pgList.checkAnswer("probNo", topic, value, "1.15", nQuestion, gameState.flagFocus, setGameState)
+                    if (!isFinished) await createQuestion()
+                  }
+                }
+                sx={{ flex: 1 }}
+              >Probabilmente No</Button>
+            </ButtonGroup>
+            <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%" }}>
+              <Button
+                onClick={
+                  async() => {
+                    var isFinished = await pgList.checkAnswer("sì", topic, value, "1.3", nQuestion, gameState.flagFocus, setGameState)
+                    if (!isFinished) await createQuestion()
+                  }
+                }
+                sx={{ flex: 1 }}
               >Sì</Button>
               <Button
                 onClick={
@@ -107,16 +127,16 @@ function Game() {
                   await createQuestion()
                   }
                 }
-                //sx={{ margin: 1 }}
+                sx={{ flex: 1 }}
               >Non lo so</Button>
               <Button
                 onClick={
                   async() => {
-                    var isFinished = await pgList.checkAnswer("no", topic, value, nQuestion, gameState.flagFocus, setGameState)
+                    var isFinished = await pgList.checkAnswer("no", topic, value, "1.3", nQuestion, gameState.flagFocus, setGameState)
                     if (!isFinished) await createQuestion()
                   }
                 }
-                //sx={{ margin: 1 }}
+                sx={{ flex: 1 }}
               >No</Button>
             </ButtonGroup>
           </>

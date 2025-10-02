@@ -51,7 +51,7 @@ class PgList {
     return this.pgList[1].values().next().value
   }
 
-  async checkAnswer(answer, topic, value, nQuestion, flagFocus, setGameState) {
+  async checkAnswer(answer, topic, value, increase, nQuestion, flagFocus, setGameState) {
     if(flagFocus){
       const pg = await getInfoSolution(this.firstKey())
       if(answer === "sì" || answer === "probSì"){
@@ -74,7 +74,7 @@ class PgList {
       return false
     }
     const ids = await getRightIds(answer, topic, value)
-    this.updateProbabilities(ids, nQuestion)
+    this.updateProbabilities(ids, increase, nQuestion)
 
     if (topic === "anime") {
       removeAnime(answer === "sì" || answer === "probSì", value)
@@ -103,13 +103,13 @@ class PgList {
     return false
   }
 
-  updateProbabilities(ids, nQuestion) {
+  updateProbabilities(ids, increase, nQuestion) {
     let listLength = this.length()
     for (const id of ids) {
       const i = this.pgList.findIndex(map => map.has(id))
       if (i !== -1) {
         const oldVal = [...this.pgList[i].values()][0]
-        this.pgList[i].set(id, oldVal * 1.3)
+        this.pgList[i].set(id, oldVal * increase)
       } else {
         if (nQuestion < maxExpansionRound){
           //console.log("aggiungo nuovi id")
