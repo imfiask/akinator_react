@@ -88,7 +88,7 @@ function Game() {
               : <Typography variant="body1" sx={{ whiteSpace: 'pre-line', height: 32.7 }}>{question}</Typography>
             }
             <br/>
-            <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%" }}>
+            <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%", height: 50 }}>
               <Button
                 onClick={
                   async() => {
@@ -108,7 +108,7 @@ function Game() {
                 sx={{ flex: 1 }}
               >Probabilmente No</Button>
             </ButtonGroup>
-            <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%" }}>
+            <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%", height: 50 }}>
               <Button
                 onClick={
                   async() => {
