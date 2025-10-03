@@ -57,7 +57,7 @@ class PgList {
     if(flagFocus){
       const pg = await getInfoSolution(this.firstKey())
       if(answer === "sì" || answer === "probSì"){
-        console.log("VINCO PERCHE' FLAGFOCUS")
+        //console.log("VINCO PERCHE' FLAGFOCUS")
         setGameState(state =>({...state, progress: 1}))
         setTimeout(() => {
             setGameState(state =>({
@@ -95,7 +95,7 @@ class PgList {
       this.normalize()
       if (this.isFirstHighEnough()) {
         const pg = await getInfoSolution(this.firstKey())
-        console.log("VINCO PERCHE' PROBABILITA' ABBASTANZA ALTA")
+        //console.log("VINCO PERCHE' PROBABILITA' ABBASTANZA ALTA")
         setGameState(state =>({...state, progress: 1}))
         setTimeout(() => {
             setGameState(state =>({

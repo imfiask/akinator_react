@@ -55,7 +55,7 @@ function Game() {
   const navigate = useNavigate()
   
   async function createQuestion(){
-    if (nQuestion > 2) updateProgress()
+    if (nQuestion > 2 && pgList.length() > 1) updateProgress()
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
     //console.log(pgList.getList())
@@ -69,7 +69,10 @@ function Game() {
   function updateProgress(){
     var gapScore = pgList.firstValue() - pgList.secondValue()
     var pgProgress = (totPgs - pgList.length()) / totPgs
-    setGameState(state =>({...state, progress: pgProgress + gapScore}))
+    var tempProgress = pgProgress + gapScore
+    //console.log(">=1:", tempProgress >= 1, "focus basso:", gameState.flagFocus && tempProgress <= 0.6)
+    if(gameState.flagFocus && tempProgress <= 0.6) setGameState(state =>({...state, progress: tempProgress + 0.3}))
+    else setGameState(state =>({...state, progress: (tempProgress >= 1) ? 0.9 : tempProgress}))
   }
   
   useEffect(() => {

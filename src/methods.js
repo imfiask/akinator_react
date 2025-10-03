@@ -19,7 +19,7 @@ export async function generateQuestion(nQuestion, setGameState) {
     }
     if(nq.length === 0){
       if(pgList.firstValue() > pgList.secondValue()){
-        console.log("VINCO PERCHE' LISTA DI DOMANDE VUOTA")
+        //console.log("VINCO PERCHE' LISTA DI DOMANDE VUOTA")
         setGameState(state =>({...state, progress: 1}))
         setTimeout(() => {
             setGameState(state =>({
