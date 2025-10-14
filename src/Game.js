@@ -58,7 +58,7 @@ function Game() {
   const navigate = useNavigate()
   
   async function createQuestion(){
-    console.log("gamehistory all'inizio di createquestion",gameHistory.current)
+    //console.log("gamehistory all'inizio di createquestion",gameHistory.current)
     if (nQuestion > 2 && pgList.length() > 1) updateProgress()
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
@@ -99,9 +99,9 @@ function Game() {
       if(nQuestion !== 4) maxExpansionRound--
     }*/
     setGameState(lastRound[0])
-    console.log("pgList dell'ultimo round",lastRound[1])
+    //console.log("pgList dell'ultimo round",lastRound[1])
     pgList.overwrite(lastRound[1])
-    console.log("gamehistory current alla fine di rewind",gameHistory.current)
+    //console.log("gamehistory current alla fine di rewind",gameHistory.current)
     //console.log("pgList alla fine di rewind", pgList.getList())
   }
   
