@@ -1,5 +1,5 @@
 import { getFirstQuestion, nextPgQuestion, getInfoSolution } from "./supabase_client"
-import { pgList, questionsDone, animeInGame, nFirstQuestion } from "./Game"
+import { pgList, questionsDone, animeInGame, nFirstQuestion, stampa } from "./Game"
 
 export const questionHeader = "Il tuo personaggio "
 
@@ -14,12 +14,10 @@ export async function generateQuestion(nQuestion, setGameState) {
         ...state,
         flagFocus: true,
       }))
-      //console.log("focus true perché primo/secondo = " + pgList.firstValue() / pgList.secondValue())
       flag = true
     }
     if(nq.length === 0){
       if(pgList.firstValue() > pgList.secondValue()){
-        //console.log("VINCO PERCHE' LISTA DI DOMANDE VUOTA")
         setGameState(state =>({...state, progress: 1}))
         setTimeout(() => {
             setGameState(state =>({
@@ -38,7 +36,6 @@ export async function generateQuestion(nQuestion, setGameState) {
           ...state,
           flagFocus: true,
         }))
-        //console.log("focus true")
         flag = true
       }
     }
@@ -90,5 +87,4 @@ function rightQuestion(nq, flag){
 
 export function removeAnime(flag, anime){
   animeInGame.splice(0, animeInGame.length, ...animeInGame.filter(item => flag ? item === anime : item !== anime))
-  //console.log("animeInGame: ", animeInGame)
 }

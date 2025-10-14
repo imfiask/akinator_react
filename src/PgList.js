@@ -57,7 +57,6 @@ class PgList {
     if(flagFocus){
       const pg = await getInfoSolution(this.firstKey())
       if(answer === "sì" || answer === "probSì"){
-        //console.log("VINCO PERCHE' FLAGFOCUS")
         setGameState(state =>({...state, progress: 1}))
         setTimeout(() => {
             setGameState(state =>({
@@ -76,7 +75,6 @@ class PgList {
         ...state,
         flagFocus: false,
       }))
-      //console.log("focus false")
       return false
     }
     const ids = await getRightIds(answer, topic, value)
@@ -88,14 +86,11 @@ class PgList {
     }
 
     this.normalize()
-    //console.log("nQuestion:", nQuestion, "maxExpansionRound:", maxExpansionRound, "nQuestion > maxExpansionRound")
     if (nQuestion > maxExpansionRound) {
-      //console.log("tolgo pg")
       this.selectAndRemoveLowProbabilities(topic, answer)
       this.normalize()
       if (this.isFirstHighEnough()) {
         const pg = await getInfoSolution(this.firstKey())
-        //console.log("VINCO PERCHE' PROBABILITA' ABBASTANZA ALTA")
         setGameState(state =>({...state, progress: 1}))
         setTimeout(() => {
             setGameState(state =>({
@@ -143,13 +138,11 @@ class PgList {
       if(topic === "anime") return
       this.remove(toRemove)
     }
-    //console.log("toRemove: ", toRemove)
   }
 
   isFirstHighEnough() {
     const first = this.pgList[0].values().next().value
     const second = this.pgList[1].values().next().value
-    //console.log(first / second)
     return first / second > 1.65
   }
 
