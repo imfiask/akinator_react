@@ -52,7 +52,7 @@ class PgList {
   }
 
   //risposta utente, tema domanda, domanda, peso, nDomanda, focus on, gameState, progress
-  async checkAnswer(answer, topic, value, increase, nQuestion, flagFocus, setGameState) {
+  async checkAnswer(answer, topic, value, weight, nQuestion, flagFocus, setGameState) {
     setGameState(state =>({...state, isLoading: true}))
     if(flagFocus){
       const pg = await getInfoSolution(this.firstKey())
@@ -80,7 +80,7 @@ class PgList {
       return false
     }
     const ids = await getRightIds(answer, topic, value)
-    this.updateProbabilities(ids, increase, nQuestion)
+    this.updateProbabilities(ids, weight, nQuestion)
 
     if (topic === "anime") {
       removeAnime(answer === "sì" || answer === "probSì", value)
@@ -112,13 +112,13 @@ class PgList {
     return false
   }
 
-  updateProbabilities(ids, increase, nQuestion) {
+  updateProbabilities(ids, weight, nQuestion) {
     let listLength = this.length()
     for (const id of ids) {
       const i = this.pgList.findIndex(map => map.has(id))
       if (i !== -1) {
         const oldVal = [...this.pgList[i].values()][0]
-        this.pgList[i].set(id, oldVal * increase)
+        this.pgList[i].set(id, oldVal * weight)
       } else {
         if (nQuestion < maxExpansionRound){
           this.add(id, listLength + ids.length)
@@ -170,6 +170,14 @@ class PgList {
       const id = [...map.keys()][0]
       return !toRemove.includes(id)
     })
+  }
+
+  clone(){
+    return this.pgList.map(m => new Map([...m.entries()]))
+  }
+
+  overwrite(newData) {
+    this.pgList = newData.map(m => new Map([...m.entries()]))
   }
 }
 

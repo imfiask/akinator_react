@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Typography, Button, ButtonGroup, Box, LinearProgress } from "@mui/material";
-import { generateQuestion } from './methods'
+import { Container, Typography, Button, ButtonGroup, Box, LinearProgress, IconButton } from "@mui/material";
+import UndoIcon from "@mui/icons-material/Undo";
+import { generateQuestion, analyzeQuestion, questionHeader } from './methods'
 import { getAllAnime, getAmountPg } from './supabase_client'
 import PgList from './PgList'
 /*
@@ -20,7 +21,7 @@ var attempts
 var totPgs = await getAmountPg()
 var animeList = await getAllAnime()
 
-export async function resetGame(setNquestion, setQuestion, setGameState){
+export async function resetGame(setNquestion, setQuestion, gameState, setGameState, gameHistory){
   pgList = new PgList()
   questionsDone = []
   animeInGame = [...animeList]
@@ -38,6 +39,7 @@ export async function resetGame(setNquestion, setQuestion, setGameState){
     nameWinner: null,
     imageWinner: null
   })
+  gameHistory.current.push([{...gameState}, pgList.clone(), [...animeInGame], null])
 }
 
 function Game() {
@@ -52,81 +54,134 @@ function Game() {
     imageWinner: null
   })
   const initialized = useRef(false)
+  var gameHistory = useRef([])
   const navigate = useNavigate()
   
   async function createQuestion(){
+    console.log("gamehistory all'inizio di createquestion",gameHistory.current)
     if (nQuestion > 2 && pgList.length() > 1) updateProgress()
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
-    //console.log(pgList.getList())
     let newQuestion
     [newQuestion, topic, value] = await generateQuestion(nq, setGameState)
-    if (newQuestion) setQuestion(newQuestion)
+    if (newQuestion){
+      setQuestion(newQuestion)
+    }
     setGameState(state =>({...state, isLoading: false}))
-    //console.log(questionsDone)
+  }
+
+  /*
+  0 -> gameState
+  1 -> pgList
+  2 -> animeInGame
+  3 -> userAnswer
+  */
+  async function rewind(){
+    //console.log("gameHistory prima il pop",[...gameHistory.current])
+    gameHistory.current.pop()
+    //console.log("gameHistory dopo il pop", gameHistory.current)
+    const lastRound = gameHistory.current.at(-1)
+    setNquestion(nq => nq-1)
+    //console.log("qdone",[...questionsDone])
+    questionsDone.pop()
+    var q = questionsDone.at(-1)
+    if (q) setQuestion(`${questionHeader} ${analyzeQuestion({id: q[0], topic: q[1], question: q[2]})}`)
+    else{
+      let qTemp
+      [qTemp, topic, value] = await generateQuestion(nQuestion-1, setGameState)
+      setQuestion(qTemp)
+      //`${questionHeader} ${analyzeQuestion({id: qTemp[0], topic: qTemp[1], question: qTemp[2]})}`)
+    }
+    animeInGame = [...lastRound[2]]
+    /*if(lastRound[3] === "nls"){
+      countIdk--
+      if(nQuestion === 1) nFirstQuestion = 1
+      if(nQuestion !== 4) maxExpansionRound--
+    }*/
+    setGameState(lastRound[0])
+    console.log("pgList dell'ultimo round",lastRound[1])
+    pgList.overwrite(lastRound[1])
+    console.log("gamehistory current alla fine di rewind",gameHistory.current)
+    //console.log("pgList alla fine di rewind", pgList.getList())
   }
   
   function updateProgress(){
     var gapScore = pgList.firstValue() - pgList.secondValue()
     var pgProgress = (totPgs - pgList.length()) / totPgs
     var tempProgress = pgProgress + gapScore
-    //console.log(">=1:", tempProgress >= 1, "focus basso:", gameState.flagFocus && tempProgress <= 0.6)
     if(gameState.flagFocus && tempProgress <= 0.6) setGameState(state =>({...state, progress: tempProgress + 0.3}))
-    else setGameState(state =>({...state, progress: (tempProgress >= 1) ? 0.9 : tempProgress}))
+    else setGameState(state =>({...state, progress: (tempProgress >= 1) ? 0.99 : tempProgress}))
+  }
+
+  async function handleAnswer(userAnswer, weight){
+    //console.log("pgList appena handle", pgList.getList())
+    var isFinished = await pgList.checkAnswer(userAnswer, topic, value, weight, nQuestion, gameState.flagFocus, setGameState)
+    gameHistory.current.push([{...gameState}, pgList.clone(), [...animeInGame], userAnswer])
+    //console.log("pgList dopo il push su gameHistory dentro handle",pgList.getList())
+    if (!isFinished) await createQuestion()
   }
   
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
-    resetGame(setNquestion, setQuestion, setGameState)
+    resetGame(setNquestion, setQuestion, gameState, setGameState, gameHistory)
     createQuestion()
   }, [])
 
   return (
-    <Container maxWidth="sm" sx={{ textAlign: "center" }}>
+    <Container maxWidth="sm" sx={{ textAlign: "center", marginTop: 1 }}>
       {!gameState.flagWin
         ? (
           <>
             <Container sx={{ height: 100 }}>
-              <Typography variant="body1" sx={{ fontWeight: "bold" }}>Domanda n°{nQuestion}:</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  position: "relative"
+                }}
+              >
+                <Button
+                  onClick={rewind}
+                  disabled={nQuestion === 1}
+                  variant="contained"
+                  sx={{
+                    minWidth: 0,
+                    width: 35,
+                    height: 35,
+                    borderRadius: "50%",
+                    padding: 0,
+                    position: "absolute",
+                    left: 0
+                  }}
+                >
+                  <UndoIcon />
+                </Button>
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>Domanda n°{nQuestion}:</Typography>
+              </Box>
               {gameState.isLoading
                 ? <Box
                     component="img"
                     src="/circular_loading2.gif"
                     sx={{ width: 73.5 }}
                   ></Box>
-                : <Typography variant="body1" sx={{ whiteSpace: 'pre-line', margin: 2 }}>{question}</Typography>
+                : <Typography variant="body1" sx={{ whiteSpace: 'pre-line', margin: 3 }}>{question}</Typography>
               }
             </Container>
             <br/>
             <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%", height: 50 }}>
               <Button
-                onClick={
-                  async() => {
-                    var isFinished = await pgList.checkAnswer("probSì", topic, value, "1.15", nQuestion, gameState.flagFocus, setGameState)
-                    if (!isFinished) await createQuestion()
-                  }
-                }
+                onClick={ async() => { await handleAnswer("probSì", 1.15) } }
                 sx={{ flex: 1 }}
               >Probabilmente Sì</Button>
               <Button
-                onClick={
-                  async() => {
-                    var isFinished = await pgList.checkAnswer("probNo", topic, value, "1.15", nQuestion, gameState.flagFocus, setGameState)
-                    if (!isFinished) await createQuestion()
-                  }
-                }
+                onClick={ async() => { await handleAnswer("probNo", 1.15) } }
                 sx={{ flex: 1 }}
               >Probabilmente No</Button>
             </ButtonGroup>
             <ButtonGroup variant = "contained" sx={{ display: "flex", width: "100%", height: 50 }}>
               <Button
-                onClick={
-                  async() => {
-                    var isFinished = await pgList.checkAnswer("sì", topic, value, "1.3", nQuestion, gameState.flagFocus, setGameState)
-                    if (!isFinished) await createQuestion()
-                  }
-                }
+                onClick={ async() => { await handleAnswer("sì", 1.3) } }
                 sx={{ flex: 1 }}
               >Sì</Button>
               <Button
@@ -141,12 +196,7 @@ function Game() {
                 sx={{ flex: 1 }}
               >Non lo so</Button>
               <Button
-                onClick={
-                  async() => {
-                    var isFinished = await pgList.checkAnswer("no", topic, value, "1.3", nQuestion, gameState.flagFocus, setGameState)
-                    if (!isFinished) await createQuestion()
-                  }
-                }
+                onClick={ async() => { await handleAnswer("no", 1.3) } }
                 sx={{ flex: 1 }}
               >No</Button>
             </ButtonGroup>
@@ -158,7 +208,7 @@ function Game() {
                 backgroundColor: "#262626",
                 "& .MuiLinearProgress-bar": { backgroundColor: "#00b300" }
               }}
-            />
+            ></LinearProgress>
           </>
         ) : (
           <>

@@ -1,7 +1,7 @@
 import { getFirstQuestion, nextPgQuestion, getInfoSolution } from "./supabase_client"
 import { pgList, questionsDone, animeInGame, nFirstQuestion } from "./Game"
 
-const questionHeader = "Il tuo personaggio "
+export const questionHeader = "Il tuo personaggio "
 
 export async function generateQuestion(nQuestion, setGameState) {
   let question
@@ -52,7 +52,7 @@ export async function generateQuestion(nQuestion, setGameState) {
   ]
 }
 
-function analyzeQuestion(question) {
+export function analyzeQuestion(question) {
   const value = question.question
   switch (question.topic) {
     case "anime": return `proviene dall'universo di ${value}?`
