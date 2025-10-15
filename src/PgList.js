@@ -35,19 +35,19 @@ class PgList {
     this.sort()
   }
   
-  firstKey() {
+  getFirstKey() {
     return this.pgList[0].keys().next().value
   }
 
-  secondKey() {
+  getSecondKey() {
     return this.pgList[1].keys().next().value
   }
 
-  firstValue(){
+  getFirstValue(){
     return this.pgList[0].values().next().value
   }
 
-  secondValue(){
+  getSecondValue(){
     return this.pgList[1].values().next().value
   }
 
@@ -55,7 +55,7 @@ class PgList {
   async checkAnswer(answer, topic, value, weight, nQuestion, flagFocus, setGameState) {
     setGameState(state =>({...state, isLoading: true}))
     if(flagFocus){
-      const pg = await getInfoSolution(this.firstKey())
+      const pg = await getInfoSolution(this.getFirstKey())
       if(answer === "sì" || answer === "probSì"){
         setGameState(state =>({...state, progress: 1}))
         setTimeout(() => {
@@ -69,7 +69,7 @@ class PgList {
         }, 500)
         return true
       }
-      this.pgList[0].set(this.firstKey(), this.firstValue() * 0.5) 
+      this.pgList[0].set(this.getFirstKey(), this.getFirstValue() * 0.5) 
       this.normalize()
       setGameState(state =>({
         ...state,
@@ -90,7 +90,7 @@ class PgList {
       this.selectAndRemoveLowProbabilities(topic, answer)
       this.normalize()
       if (this.isFirstHighEnough()) {
-        const pg = await getInfoSolution(this.firstKey())
+        const pg = await getInfoSolution(this.getFirstKey())
         setGameState(state =>({...state, progress: 1}))
         setTimeout(() => {
             setGameState(state =>({
@@ -124,7 +124,7 @@ class PgList {
 
   selectAndRemoveLowProbabilities(topic, answer) {
     const toRemove = []
-    const minValue = this.firstValue() * 0.2
+    const minValue = this.getFirstValue() * 0.2
     let i = this.length() - 1
     while (i >= 0) {
       const value = this.pgList[i].values().next().value

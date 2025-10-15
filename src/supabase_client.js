@@ -120,4 +120,18 @@ export async function getSpecificQuestion(id){
   return data[0]
 }
 
+export async function calculateAccuracy(dataClean, idPg) {
+  const { data, error } = await supabase.rpc("calculate_accuracy", {
+    dataclean: dataClean,
+    idpg: idPg
+  })
+  
+  if (error) {
+    console.error("Errore in calculate_accuracy:", error)
+    return []
+  }
+  console.log(data)
+  return data 
+}
+
 export const supabase = createClient(url, key)

@@ -76,6 +76,7 @@ function Game() {
   3 -> userAnswer
   */
   async function rewind(){
+    //aggiorno le variabili in caso la risposta fosse stata "Non lo so"
     if(gameHistory.current.at(-1)[3] === "nls"){
       countIdk--
       nFirstQuestion--
@@ -86,9 +87,13 @@ function Game() {
     setNquestion(nq => nq-1)
     questionsDone.pop()
     var q = questionsDone.at(-1)
-    if (q) setQuestion(`${questionHeader} ${analyzeQuestion({id: q[0], topic: q[1], question: q[2]})}`)
-    else{
-      let qTemp
+    var qTemp
+    if (q){
+      qTemp = `${questionHeader} ${analyzeQuestion({id: q[0], topic: q[1], question: q[2]})}`
+      topic = q[1]
+      value = q[2]
+      setQuestion(qTemp)
+    }else{
       [qTemp, topic, value] = await generateQuestion(nQuestion-1, setGameState)
       setQuestion(qTemp)
     }
@@ -98,7 +103,7 @@ function Game() {
   }
   
   function updateProgress(){
-    var gapScore = pgList.firstValue() - pgList.secondValue()
+    var gapScore = pgList.getFirstValue() - pgList.getSecondValue()
     var pgProgress = (totPgs - pgList.length()) / totPgs
     var tempProgress = pgProgress + gapScore
     if(gameState.flagFocus && tempProgress <= 0.6) setGameState(state =>({...state, progress: tempProgress + 0.3}))
@@ -221,7 +226,7 @@ function Game() {
             <Button
               variant = "contained"
               onClick={() => {
-                navigate('/result', { state: { error: 0 } })
+                navigate('/result', { state: { error: 0, gameHistory: gameHistory, idPg: pgList.getFirstKey() } })
               }}
               sx={{ margin: 1 }}
             >Sì</Button>
@@ -230,7 +235,7 @@ function Game() {
               onClick={async() => {
                 if(attempts === 1){
                   attempts++
-                  pgList.remove([pgList.firstKey()])
+                  pgList.remove([pgList.getFirstKey()])
                   pgList.normalize()
                   setGameState(state =>({
                     ...state,

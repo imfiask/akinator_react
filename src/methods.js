@@ -8,8 +8,8 @@ export async function generateQuestion(nQuestion, setGameState) {
   let flag = false
   if (nQuestion === nFirstQuestion) question = await getFirstQuestion()
   else {
-    let nq = await nextPgQuestion(pgList.keys(), questionsDone, pgList.firstKey())
-    if(pgList.firstValue() / pgList.secondValue() >= 1.29){
+    let nq = await nextPgQuestion(pgList.keys(), questionsDone, pgList.getFirstKey())
+    if(pgList.getFirstValue() / pgList.getSecondValue() >= 1.29){
       setGameState(state =>({
         ...state,
         flagFocus: true,
@@ -17,7 +17,7 @@ export async function generateQuestion(nQuestion, setGameState) {
       flag = true
     }
     if(nq.length === 0){
-      if(pgList.firstValue() > pgList.secondValue()){
+      if(pgList.getFirstValue() > pgList.getSecondValue()){
         setGameState(state =>({...state, progress: 1}))
         setTimeout(() => {
             setGameState(state =>({
@@ -28,10 +28,10 @@ export async function generateQuestion(nQuestion, setGameState) {
             imageWinner: pg.image
           }))
         }, 500)
-        const pg = await getInfoSolution(pgList.firstKey())
+        const pg = await getInfoSolution(pgList.getFirstKey())
         return [null, null, null]
       } else {
-        nq = await nextPgQuestion(pgList.keys(), questionsDone, pgList.secondKey())
+        nq = await nextPgQuestion(pgList.keys(), questionsDone, pgList.getSecondKey())
         setGameState(state =>({
           ...state,
           flagFocus: true,
