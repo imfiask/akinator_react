@@ -130,7 +130,6 @@ export async function calculateAccuracy(dataClean, idPg) {
     console.error("Errore in calculate_accuracy:", error)
     return []
   }
-  console.log(data)
   return data 
 }
 

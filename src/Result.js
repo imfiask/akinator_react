@@ -17,7 +17,6 @@ function Result() {
       return [q[0], round[3] === "sì" || round[3] === "probSì"]
     })
     var accuracy = await calculateAccuracy(dataClean, idPg)
-    console.log(questionsDone.length)
     return ((accuracy/questionsDone.length)*100).toFixed(2)
   }
 
