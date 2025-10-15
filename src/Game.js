@@ -163,8 +163,8 @@ function Game() {
               {gameState.isLoading
                 ? <Box
                     component="img"
-                    src="/circular_loading2.gif"
-                    sx={{ width: 73.5 }}
+                    src="/loading.gif"
+                    sx={{ width: 50, margin: 2}}
                   ></Box>
                 : <Typography variant="body1" sx={{ whiteSpace: 'pre-line', margin: 3 }}>{question}</Typography>
               }
