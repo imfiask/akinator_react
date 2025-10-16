@@ -12,14 +12,16 @@ function Result() {
   const { error, gameHistory, idPg } = location.state || {}
   const navigate = useNavigate()
   const [message, setMessage] = useState("")
+  const [helpfulAnswers, setHelpfulAnswers] = useState(0)
 
   async function precision(){
     const dataClean = questionsDone.map((q, i) => {
       const round = gameHistory.current.at(i + 1)
       return [q[0], round[3] === "sì" || round[3] === "probSì"]
     })
-    var accuracy = await calculateAccuracy(dataClean, idPg)
-    return ((accuracy/questionsDone.length)*100).toFixed(2)
+    var tempHelpfulAnswers = await calculateAccuracy(dataClean, idPg)
+    setHelpfulAnswers(tempHelpfulAnswers)
+    return ((tempHelpfulAnswers/questionsDone.length)*100).toFixed(2)
   }
 
   useEffect(() => {
@@ -55,13 +57,14 @@ function Result() {
       ? (
         <>
           <Typography variant="body1" sx={{backgroundColor: "#ffffffaa"}}>
-            La tua descrizione è stata precisa al{" "}
+            Precisione della tua descrizione:{" "}
             <Typography component="span"
               sx={{
                 color: message >= 90 ? "#00bc00" : "#fa5a00",
                 fontWeight: "bold"  
               }}
-            >{message}</Typography>%
+            >{message}</Typography>%<br/>
+            ({helpfulAnswers} risposte utili su {questionsDone.length})
           </Typography>
         </>
       ) : (
