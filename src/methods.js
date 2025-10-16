@@ -1,5 +1,5 @@
 import { getFirstQuestion, nextPgQuestion, getInfoSolution } from "./supabase_client"
-import { pgList, questionsDone, animeInGame, nFirstQuestion, stampa } from "./Game"
+import { pgList, questionsDone, animeInGame, nFirstQuestion } from "./Game"
 
 export const questionHeader = "Il tuo personaggio "
 
