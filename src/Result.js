@@ -61,9 +61,9 @@ function Result() {
             <Typography component="span"
               sx={{
                 color: message >= 90 ? "#00bc00" : message >= 80 ? "#fa5a00" : "#ff0000",
-                fontWeight: "bold"  
+                fontWeight: "bold"
               }}
-            >{message}</Typography>%<br/>
+            >{message}%</Typography><br/>
             ({helpfulAnswers} risposte utili su {questionsDone.length})
           </Typography>
         </>
