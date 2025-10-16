@@ -60,7 +60,7 @@ function Result() {
             Precisione della tua descrizione:{" "}
             <Typography component="span"
               sx={{
-                color: message >= 90 ? "#00bc00" : "#fa5a00",
+                color: message >= 90 ? "#00bc00" : message >= 80 ? "#fa5a00" : "#ff0000",
                 fontWeight: "bold"  
               }}
             >{message}</Typography>%<br/>
