@@ -80,6 +80,7 @@ function Game() {
   
   async function createQuestion(){
     if (nQuestion > 2 && pgList.length() > 1) updateProgress()
+    console.log(pgList.getList())
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
     let newQuestion
@@ -155,8 +156,6 @@ function Game() {
     <Box 
       sx={{
         ...background,
-        textAlign: "center",
-        minHeight: "100hv",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

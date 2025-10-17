@@ -10,7 +10,7 @@ export const background = {
   animation: "scroll 30s linear infinite",
   "@keyframes scroll": {
     "0%": { backgroundPosition: "center 0%" },
-    "100%": { backgroundPosition: "center -1648%" },
+    "100%": { backgroundPosition: "center -1650%" },
   }
 }
 
@@ -29,7 +29,7 @@ function Home() {
         size='large' 
           sx={{
             backgroundColor: "#428280ff",
-            color: "#69dedcff",
+            color: "#73f3f1ff",
             margin: 2,
             fontWeight: "bold"
           }}

@@ -51,6 +51,12 @@ class PgList {
     return this.pgList[1].values().next().value
   }
 
+  setNewValueByID(id, weight){
+    const i = this.pgList.findIndex(map => map.has(id))
+    const oldVal = [...this.pgList[i].values()][0]
+    this.pgList[i].set(id, oldVal * weight)
+  }
+
   //risposta utente, tema domanda, domanda, peso, nDomanda, focus on, gameState, progress
   async checkAnswer(answer, topic, value, weight, nQuestion, flagFocus, setGameState) {
     setGameState(state =>({...state, isLoading: true}))
@@ -85,9 +91,11 @@ class PgList {
       this.remove(ids)
     }
 
-    this.normalize()
+    //this.normalize()
     if (nQuestion > maxExpansionRound) {
-      this.selectAndRemoveLowProbabilities(topic, answer)
+      this.sort()
+      console.log("entro perché ", nQuestion, " > ", maxExpansionRound)
+      this.selectAndRemoveLowProbabilities(topic)
       this.normalize()
       if (this.isFirstHighEnough()) {
         const pg = await getInfoSolution(this.getFirstKey())
@@ -108,8 +116,21 @@ class PgList {
   }
 
   updateProbabilities(ids, weight, nQuestion) {
+    //console.log("listlength", listLength)
+    //console.log("ids.length", ids.length)
+    //console.log("aggiungo con probabilità ", 1/(listLength + ids.length)/2)
     let listLength = this.length()
-    for (const id of ids) {
+    const newIds = []
+    for (const id of ids)
+      if (this.has(id)) this.setNewValueByID(id, weight)
+      else newIds.push(id)
+    if (nQuestion >= maxExpansionRound) return
+    console.log("passo perché ", nQuestion >= maxExpansionRound)
+    const prob = (1 / (listLength + newIds.length)) * weight
+    for (const id of newIds) this.add(id, prob)
+    
+
+    /*for (const id of ids) {
       const i = this.pgList.findIndex(map => map.has(id))
       if (i !== -1) {
         const oldVal = [...this.pgList[i].values()][0]
@@ -119,12 +140,14 @@ class PgList {
           this.add(id, listLength + ids.length)
         }
       }
-    }
+    }*/
   }
 
-  selectAndRemoveLowProbabilities(topic, answer) {
+  selectAndRemoveLowProbabilities(topic) {
     const toRemove = []
     const minValue = this.getFirstValue() * 0.2
+    console.log("pgList sortata", this.getList())
+    console.log("quindi elimino tutti quelli < di ", minValue)
     let i = this.length() - 1
     while (i >= 0) {
       const value = this.pgList[i].values().next().value
