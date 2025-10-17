@@ -94,7 +94,7 @@ class PgList {
     //this.normalize()
     if (nQuestion > maxExpansionRound) {
       this.sort()
-      console.log("entro perché ", nQuestion, " > ", maxExpansionRound)
+      //console.log("entro perché ", nQuestion, " > ", maxExpansionRound)
       this.selectAndRemoveLowProbabilities(topic)
       this.normalize()
       if (this.isFirstHighEnough()) {
@@ -125,7 +125,7 @@ class PgList {
       if (this.has(id)) this.setNewValueByID(id, weight)
       else newIds.push(id)
     if (nQuestion >= maxExpansionRound) return
-    console.log("passo perché ", nQuestion >= maxExpansionRound)
+    //console.log("passo perché ", nQuestion >= maxExpansionRound)
     const prob = (1 / (listLength + newIds.length)) * weight
     for (const id of newIds) this.add(id, prob)
     
@@ -146,8 +146,8 @@ class PgList {
   selectAndRemoveLowProbabilities(topic) {
     const toRemove = []
     const minValue = this.getFirstValue() * 0.2
-    console.log("pgList sortata", this.getList())
-    console.log("quindi elimino tutti quelli < di ", minValue)
+    //console.log("pgList sortata", this.getList())
+    //console.log("quindi elimino tutti quelli < di ", minValue)
     let i = this.length() - 1
     while (i >= 0) {
       const value = this.pgList[i].values().next().value
