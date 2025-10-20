@@ -7,9 +7,9 @@ class PgList {
     this.pgList = []
   }
 
-  add(id, length) {
+  add(id, prob) {
     let map = new Map()
-    this.pgList.push(map.set(id, 1/length))
+    this.pgList.push(map.set(id, prob))
   }
 
   getList() {
@@ -127,6 +127,7 @@ class PgList {
     if (nQuestion >= maxExpansionRound) return
     //console.log("passo perché ", nQuestion >= maxExpansionRound)
     const prob = (1 / (listLength + newIds.length)) * weight
+    //console.log(prob/weight, prob)
     for (const id of newIds) this.add(id, prob)
     
 

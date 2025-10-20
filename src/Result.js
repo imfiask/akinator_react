@@ -115,7 +115,7 @@ function Result() {
             <Typography
               component="span"
               sx={{
-                color: message >= 90 ? "#00bc00" : message >= 80 ? "#fa5a00" : "#ff0000",
+                color: message >= 85 ? "#00bc00" : message >= 80 ? "#fa5a00" : "#ff0000",
                 fontWeight: "bold",
                 position: "absolute",
                 transform: "perspective(1000px) rotatey(-5deg) rotatex(10deg)",
