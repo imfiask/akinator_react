@@ -79,8 +79,8 @@ function Game() {
   const navigate = useNavigate()
   
   async function createQuestion(){
-    if (nQuestion > 2 && pgList.length() > 1) updateProgress()
-    console.log(pgList.getList())
+    if (nQuestion > 1 && pgList.length() > 1) updateProgress()
+    //console.log(pgList.getList())
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
     let newQuestion
@@ -127,12 +127,12 @@ function Game() {
   
   function updateProgress(){
     var gapScore = pgList.getFirstValue() - pgList.getSecondValue()
-    console.log("gap tra il primo e il secondo", gapScore)
+    //console.log("gap tra il primo e il secondo", gapScore)
     var pgProgress = (totPgs - pgList.length()) / totPgs
-    console.log("tutti i pg nel db",totPgs)
-    console.log("tuttiPG - PGLIST / tuttiPG",pgProgress)
+    //console.log("tutti i pg nel db",totPgs)
+    //console.log("tuttiPG - PGLIST / tuttiPG",pgProgress)
     var tempProgress = pgProgress + gapScore
-    console.log("progresso finale", tempProgress)
+    //console.log("progresso finale", tempProgress)
     if(gameState.flagFocus && tempProgress <= 0.6) setGameState(state =>({...state, progress: tempProgress + 0.3}))
     else setGameState(state =>({...state, progress: (tempProgress >= 1) ? 0.99 : tempProgress}))
   }
@@ -145,7 +145,7 @@ function Game() {
       nFirstQuestion++
       isFinished = false
     } else isFinished = await pgList.checkAnswer(userAnswer, topic, value, weight, nQuestion, gameState.flagFocus, setGameState)
-    console.log(gameState.progress)
+    //console.log(gameState.progress)
     gameHistory.current.push([{...gameState}, pgList.clone(), [...animeInGame], userAnswer])
     if (!isFinished) await createQuestion()
   }
