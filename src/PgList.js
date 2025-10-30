@@ -51,11 +51,11 @@ class PgList {
     return this.pgList[1].values().next().value
   }
 
-  setNewValueByID(id, weight){
-    const i = this.pgList.findIndex(map => map.has(id))
-    const oldVal = [...this.pgList[i].values()][0]
-    this.pgList[i].set(id, oldVal * weight)
-  }
+updateValueByID(id, weight) {
+  const map = this.pgList.find(m => m.has(id))
+  const [[key, oldVal]] = map.entries()
+  map.set(key, oldVal * weight)
+}
 
   //risposta utente, tema domanda, domanda, peso, nDomanda, focus on, gameState, progress
   async checkAnswer(answer, topic, value, weight, nQuestion, flagFocus, setGameState) {
@@ -114,41 +114,26 @@ class PgList {
     }
     return false
   }
-
+  
+  /*
+    ids: lista di id da aggiungere o aggiornare 
+    weight: il peso della risposta data
+    nQuestion: numero della domanda
+  */
   updateProbabilities(ids, weight, nQuestion) {
-    //console.log("listlength", listLength)
-    //console.log("ids.length", ids.length)
-    //console.log("aggiungo con probabilità ", 1/(listLength + ids.length)/2)
-    let listLength = this.length()
+    const listLength = this.length()
     const newIds = []
     for (const id of ids)
-      if (this.has(id)) this.setNewValueByID(id, weight)
+      if (this.has(id)) this.updateValueByID(id, weight)
       else newIds.push(id)
     if (nQuestion >= maxExpansionRound) return
-    //console.log("passo perché ", nQuestion >= maxExpansionRound)
     const prob = (1 / (listLength + newIds.length)) * weight
-    //console.log(prob/weight, prob)
     for (const id of newIds) this.add(id, prob)
-    
-
-    /*for (const id of ids) {
-      const i = this.pgList.findIndex(map => map.has(id))
-      if (i !== -1) {
-        const oldVal = [...this.pgList[i].values()][0]
-        this.pgList[i].set(id, oldVal * weight)
-      } else {
-        if (nQuestion < maxExpansionRound){
-          this.add(id, listLength + ids.length)
-        }
-      }
-    }*/
   }
 
   selectAndRemoveLowProbabilities(topic) {
     const toRemove = []
     const minValue = this.getFirstValue() * 0.2
-    //console.log("pgList sortata", this.getList())
-    //console.log("quindi elimino tutti quelli < di ", minValue)
     let i = this.length() - 1
     while (i >= 0) {
       const value = this.pgList[i].values().next().value

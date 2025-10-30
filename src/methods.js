@@ -56,8 +56,8 @@ export function analyzeQuestion(question) {
     case "is_male": return value === "null"
         ? "ha un sesso non specificato nella serie?"
         : value
-        ? "è maschio?"
-        : "è femmina?"
+            ? "è maschio?"
+            : "è femmina?"
     case "race": return `è un ${value}?`
     case "is_hero": return value ? "è dalla parte dei buoni/alleati?" : "è un villain?"
     case "team": return `fa parte ${value}?`

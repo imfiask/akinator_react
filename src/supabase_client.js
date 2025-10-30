@@ -70,19 +70,6 @@ export async function getRightIds(answer, topic, value) {
   }
 }
 
-//query per pescare la domanda giusta
-export async function nextQuestion(ids, qd) {
-  const { data, error } = await supabase.rpc("next_question", {
-    ids: ids,
-    questions_done: qd
-  })
-  if (error) {
-    console.error("Errore in next_question:", error)
-    return []
-  }
-  return data
-}
-
 //query per pescare la domanda giusta basata sul pg
 export async function nextPgQuestion(ids, qd, idPg) {
   const { data, error } = await supabase.rpc("next_pg_question", {
