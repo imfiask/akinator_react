@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Button, Box } from '@mui/material';
 
-export const background = {
+/*export const background = {
   textAlign: "center",
   height: "100vh",
   backgroundImage: "url('/background2.png')",
@@ -12,7 +12,21 @@ export const background = {
     "0%": { backgroundPosition: "center 0%" },
     "100%": { backgroundPosition: "center -1650%" },
   }
-}
+}*/
+
+export const background = {
+  textAlign: "center",
+  height: "100vh",
+  backgroundImage: "url('/background2.png')",
+  backgroundSize: "cover",
+  backgroundRepeat: "repeat-y",
+  animation: "scroll 500000s linear infinite",
+  "@keyframes scroll": {
+    "0%": { backgroundPositionY: "0" },
+    "100%": { backgroundPositionY: "-60000000%" },
+  },
+};
+
 
 function Home() {
   const navigate = useNavigate();
@@ -20,9 +34,10 @@ function Home() {
   return (
       <Box sx={background}>
         <Box component="img" src="satoshi_0.png"
-        sx={{
-          width: 400
-        }}>
+          sx={{
+            maxWidth: "auto",
+            height: "87vh",
+          }}>
         </Box>
         <br/>
         <Button variant = "contained"

@@ -6,11 +6,7 @@ import UndoIcon from "@mui/icons-material/Undo";
 import { generateQuestion, analyzeQuestion, questionHeader } from './methods'
 import { getAllAnime, getAmountPg } from './supabase_client'
 import PgList from './PgList'
-/*
-- (elimina funzioni inutili)
-- aggiungere le immagini dell'avatar
-- poter ritornare indietro con le domande
-*/
+
 var topic, value
 export var pgList
 export var questionsDone
@@ -171,153 +167,199 @@ function Game() {
         src='satoshi_title.png'
         sx={{height: "30%", position: "absolute", top: 0, left: 0}}
       ></Box>
-      {!gameState.flagWin
-        ? (
-          <>
-            <Container 
-            maxWidth="md"
-              sx={{
-                display: "flex",
-                //flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Box
-                component="img"
-                src={satoshi}
-                sx={{ width: 300, height: "auto" }}
-              ></Box>
-              <Container>
-                <Container maxWidth="sm" sx={{ height: 100, backgroundColor: "#ffffffaa", }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      position: "relative",
-                      width: "100%",
-                      marginBottom: 2
-                    }}
-                  >
-                    <Button
-                      onClick={rewind}
-                      disabled={nQuestion === 1}
-                      variant="contained"
-                      sx={{
-                        backgroundColor: "orange",
-                        minWidth: 0,
-                        width: 35,
-                        height: 35,
-                        borderRadius: "50%",
-                        position: "absolute",
-                        left: 0,
-                        marginTop: 1
-                      }}
-                    >
-                      <UndoIcon />
-                    </Button>
-                    <Typography variant="body1" sx={{ fontWeight: "bold", marginTop: 1 }}>Domanda n°{nQuestion}:</Typography>
-                  </Box>
-                  {gameState.isLoading
-                    ? <Box
-                        component="img"
-                        src="/loading1.gif"
-                        sx={{ width: 45 }}
-                      ></Box>
-                    : <Typography variant="body1" sx={{ whiteSpace: 'pre-line', fontSize: 15 }}>{question}</Typography>
-                  }
-                </Container>
 
-                <ButtonGroup variant = "contained" sx={{ width: "100%", height: 50. }}>
-                  <Button
-                    onClick={ async() => { await handleAnswer("probSì", 1.15) } }
-                    sx={{ flex: 1, ...buttonStyle }}
-                    disabled={gameState.isLoading}
-                  >Probabilmente Sì</Button>
-                  <Button
-                    onClick={ async() => { await handleAnswer("probNo", 1.15) } }
-                    sx={{ flex: 1, ...buttonStyle }}
-                    disabled={gameState.isLoading}
-                  >Probabilmente No
-                  </Button>
-                </ButtonGroup>
-                <ButtonGroup variant = "contained" sx={{ width: "100%", height: 50 }}>
-                  <Button
-                    onClick={ async() => { await handleAnswer("sì", 1.3) } }
-                    sx={{ flex: 1, ...buttonStyle }}
-                    disabled={gameState.isLoading}
-                  >Sì
-                  </Button>
-                  <Button
-                    onClick={ async() =>  {await handleAnswer("nls", null) } }
-                    sx={{ flex: 1, ...buttonStyle }}
-                    disabled={gameState.isLoading}
-                  >Non lo so</Button>
-                  <Button
-                    onClick={ async() => { await handleAnswer("no", 1.3) } }
-                    sx={{ flex: 1, ...buttonStyle }}
-                    disabled={gameState.isLoading}
-                  >No</Button>
-                </ButtonGroup>
-                <LinearProgress
-                  variant="determinate"
-                  value={gameState.progress * 100}
+      <Container 
+        maxWidth="md"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {/* 👇 SATOSHI SEMPRE VISIBILE */}
+        <Box
+          component="img"
+          src={satoshi}
+          sx={{ marginLeft: 9, width: 300, height: "auto",  }}
+        ></Box>
+
+        {/* 👇 SE flagWin = FALSE → mostra domande e bottoni */}
+        {!gameState.flagWin && (
+          <Container sx={{ marginLeft: 7, minWidth: 600 }}>
+
+            <Container maxWidth="sm" sx={{ height: 100, backgroundColor: "#ffffffaa", }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                  width: "100%",
+                  marginBottom: 2
+                }}
+              >
+                <Button
+                  onClick={rewind}
+                  disabled={nQuestion === 1}
+                  variant="contained"
                   sx={{
-                    height: 15,
-                    backgroundColor: "#262626",
-                    "& .MuiLinearProgress-bar": { backgroundColor: "#00bc00" }
+                    backgroundColor: "orange",
+                    minWidth: 0,
+                    width: 35,
+                    height: 35,
+                    borderRadius: "50%",
+                    position: "absolute",
+                    left: 0,
+                    marginTop: 1
                   }}
-                ></LinearProgress>
+                >
+                  <UndoIcon />
+                </Button>
+                <Typography variant="body1" sx={{ fontWeight: "bold", marginTop: 1 }}>
+                  Domanda n°{nQuestion}:
+                </Typography>
+              </Box>
+
+              {gameState.isLoading ? (
+                <Box
+                  component="img"
+                  src="/loading1.gif"
+                  sx={{ width: 45 }}
+                ></Box>
+              ) : (
+                <Typography variant="body1" sx={{ whiteSpace: 'pre-line', fontSize: 15 }}>
+                  {question}
+                </Typography>
+              )}
+            </Container>
+
+            <ButtonGroup variant="contained" sx={{ width: "100%", height: 50 }}>
+              <Button
+                onClick={ async() => { await handleAnswer("probSì", 1.15) } }
+                sx={{ flex: 1, ...buttonStyle }}
+                disabled={gameState.isLoading}
+              >Probabilmente Sì</Button>
+
+              <Button
+                onClick={ async() => { await handleAnswer("probNo", 1.15) } }
+                sx={{ flex: 1, ...buttonStyle }}
+                disabled={gameState.isLoading}
+              >Probabilmente No</Button>
+            </ButtonGroup>
+
+            <ButtonGroup variant="contained" sx={{ width: "100%", height: 50 }}>
+              <Button
+                onClick={ async() => { await handleAnswer("sì", 1.3) } }
+                sx={{ flex: 1, ...buttonStyle }}
+                disabled={gameState.isLoading}
+              >Sì</Button>
+
+              <Button
+                onClick={ async() =>  {await handleAnswer("nls", null) } }
+                sx={{ flex: 1, ...buttonStyle }}
+                disabled={gameState.isLoading}
+              >Non lo so</Button>
+
+              <Button
+                onClick={ async() => { await handleAnswer("no", 1.3) } }
+                sx={{ flex: 1, ...buttonStyle }}
+                disabled={gameState.isLoading}
+              >No</Button>
+            </ButtonGroup>
+
+            <LinearProgress
+              variant="determinate"
+              value={gameState.progress * 100}
+              sx={{
+                height: 15,
+                backgroundColor: "#262626",
+                "& .MuiLinearProgress-bar": { backgroundColor: "#00bc00" }
+              }}
+            ></LinearProgress>
+
+          </Container>
+        )}
+        {/* 👇 SE flagWin = TRUE → mostra solo la parte finale */}
+        {gameState.flagWin && (
+          <Container sx={{ marginLeft: 7}}>
+            <Container sx={{textAlign: "center"}}>
+              <Container
+                sx={{
+                  backgroundColor: "#ffffffaa",
+                  borderRadius: 5,
+                  padding: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  width: "fit-content",
+                }}
+              >
+                <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+                  Il tuo personaggio è...
+                </Typography>
+
+                <Typography
+                  variant="h5" // più grande
+                  sx={{ fontWeight: "bold", marginTop: 1, fontSize: 35 }}
+                >
+                  {gameState.nameWinner}
+                </Typography>
+
+                <Box
+                  component="img"
+                  src={gameState.imageWinner}
+                  alt={gameState.nameWinner}
+                  sx={{ width: 250, height: 250, objectFit: "contain", marginTop: 2 }}
+                />
+
+                <Box sx={{ marginTop: 2 }}>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      navigate('/result', { 
+                        state: { 
+                          error: 0, 
+                          gameHistory: gameHistory, 
+                          idPg: pgList.getFirstKey()
+                        }
+                      })
+                    }}
+                    sx={{ margin: 1 }}
+                  >
+                    Sì
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    onClick={async() => {
+                      if(attempts === 1){
+                        attempts++
+                        pgList.remove([pgList.getFirstKey()])
+                        pgList.normalize()
+                        setGameState(state =>({
+                          ...state,
+                          flagWin: false,
+                          flagFocus: false
+                        }))
+                        await createQuestion()
+                      } else {
+                        navigate('/result', { state: { error: 1 } })
+                      }
+                    }}
+                    sx={{ margin: 1 }}
+                  >
+                    No
+                  </Button>
+                </Box>
               </Container>
             </Container>
-          </>
-        ) : (
-          <>
-            <Container sx={{textAlign: "center"}}>
-              <Typography
-                variant = "body1"
-                sx={{ whiteSpace: "pre-line" }}
-              >
-                Il tuo personaggio è <strong>{gameState.nameWinner}</strong>!
-              </Typography>
-              <Box
-                component = "img"
-                src={gameState.imageWinner}
-                alt={gameState.nameWinner}
-                sx={{ width: 250, height: 250, objectFit: "contain" }}
-              />
-              <br/>
-              <Button
-                variant = "contained"
-                onClick={() => {
-                  navigate('/result', { state: { error: 0, gameHistory: gameHistory, idPg: pgList.getFirstKey() } })
-                }}
-                sx={{ margin: 1 }}
-              >Sì</Button>
-              <Button
-                variant = "contained"
-                onClick={async() => {
-                  if(attempts === 1){
-                    attempts++
-                    pgList.remove([pgList.getFirstKey()])
-                    pgList.normalize()
-                    setGameState(state =>({
-                      ...state,
-                      flagWin: false,
-                      flagFocus: false
-                    }))
-                    await createQuestion()
-                  } else navigate('/result', { state: { error: 1 } })
-                }}
-                sx={{ margin: 1 }}
-              >No</Button>
-            </Container>
-          </>
-        )
-      }
-    </Box>  
+          </Container>
+        )}
+
+      </Container>
+    </Box>
   )
+
 }
 
 export default Game

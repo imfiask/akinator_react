@@ -9,7 +9,7 @@ export async function generateQuestion(nQuestion, setGameState) {
   if (nQuestion === nFirstQuestion) question = await getFirstQuestion()
   else {
     let nq = await nextPgQuestion(pgList.keys(), questionsDone, pgList.getFirstKey())
-    if(pgList.getFirstValue() / pgList.getSecondValue() >= 1.29){
+    if(pgList.getFirstValue() / pgList.getSecondValue() >= 1.29 && nQuestion > 5){
       setGameState(state =>({
         ...state,
         flagFocus: true,
