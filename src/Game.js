@@ -60,13 +60,6 @@ export async function resetGame(setNquestion, setQuestion, gameState, setGameSta
 }
 
 function Game() {
-  console.log(process.env.PUBLIC_URL)
-  console.log(process.env.PUBLIC_URL)
-  console.log(process.env.PUBLIC_URL)
-  console.log(process.env.PUBLIC_URL)
-  console.log(process.env.PUBLIC_URL)
-  console.log(process.env.PUBLIC_URL)
-  console.log(process.env.PUBLIC_URL)
   const [satoshi, setSatoshi] = useState()
   const [nQuestion, setNquestion] = useState(0)
   const [question, setQuestion] = useState("")
