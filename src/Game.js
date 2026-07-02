@@ -147,8 +147,8 @@ function Game() {
   }
   
   useEffect(() => {
-    //if (initialized.current) return
-    //initialized.current = true
+    if (initialized.current) return
+    initialized.current = true
     resetGame(setNquestion, setQuestion, gameState, setGameState, gameHistory)
     createQuestion()
   }, [])
