@@ -6,7 +6,7 @@ import Result from './Result';
 
 function App() {
   return (
-    <Router basename="/akinator_react">
+    <Router basename={process.env.PUBLIC_URL}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/game" element={<Game />} />

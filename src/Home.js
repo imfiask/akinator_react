@@ -17,7 +17,8 @@ import { Button, Box } from '@mui/material';
 export const background = {
   textAlign: "center",
   height: "100vh",
-  backgroundImage: "url('/background2.png')",
+  //backgroundImage: "url('/background2.png')",
+  backgroundImage: `url(${process.env.PUBLIC_URL}/background2.png)`,
   backgroundSize: "cover",
   backgroundRepeat: "repeat-y",
   animation: "scroll 500000s linear infinite",

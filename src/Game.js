@@ -13,6 +13,7 @@ export var questionsDone
 export var animeInGame
 export var maxExpansionRound
 export var nFirstQuestion
+export const PATH = process.env.PUBLIC_URL
 var countIdk = 0
 var attempts
 var totPgs = await getAmountPg()
@@ -30,7 +31,7 @@ var animeList = await getAllAnime()
   }
 }*/
 const buttonStyle = {
-  backgroundImage: "url('/button.png')",
+  backgroundImage: `url(${process.env.PUBLIC_URL}/button.png)`,
   backgroundSize: "cover",
   backgroundPosition: "center",
   color: "black",
@@ -59,6 +60,13 @@ export async function resetGame(setNquestion, setQuestion, gameState, setGameSta
 }
 
 function Game() {
+  console.log(process.env.PUBLIC_URL)
+  console.log(process.env.PUBLIC_URL)
+  console.log(process.env.PUBLIC_URL)
+  console.log(process.env.PUBLIC_URL)
+  console.log(process.env.PUBLIC_URL)
+  console.log(process.env.PUBLIC_URL)
+  console.log(process.env.PUBLIC_URL)
   const [satoshi, setSatoshi] = useState()
   const [nQuestion, setNquestion] = useState(0)
   const [question, setQuestion] = useState("")
@@ -223,7 +231,7 @@ function Game() {
               {gameState.isLoading ? (
                 <Box
                   component="img"
-                  src="/loading1.gif"
+                  src={`${process.env.PUBLIC_URL}/loading1.gif`}
                   sx={{ width: 45 }}
                 ></Box>
               ) : (
