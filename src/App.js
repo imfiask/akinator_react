@@ -6,7 +6,7 @@ import Result from './Result';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/akinator_react">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/game" element={<Game />} />
