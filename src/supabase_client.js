@@ -10,6 +10,11 @@ export async function getAllAnime(){
     .from('distinct_anime')
     .select('*')
 
+    if (error) {
+    console.error("Supabase error:", error)
+    return []
+  }
+
     return data.map(element => element.anime)
 }
 

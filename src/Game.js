@@ -76,7 +76,7 @@ function Game() {
   
   async function createQuestion(){
     if (nQuestion > 2 && pgList.length() > 1) updateProgress()
-    //console.log(pgList.getList())
+    console.log(pgList.getList())
     let nq = nQuestion + 1 
     setNquestion((n) => n + 1)
     let newQuestion
